@@ -3,6 +3,7 @@ import { Outlet, Link } from "react-router-dom";
 import TypingAnimation from "../TypingAnimation";
 import PreLoader from "../PreLoader/PreLoader";
 import geminiLogo from "./geminiLogo.gif";
+import PropTypes from "prop-types";
 
 export default function Home(props) {
   // Check if webSiteData exists before accessing its properties
@@ -23,11 +24,11 @@ export default function Home(props) {
         />
 
         <div
-          class="card-img-overlay d-flex align-items-start flex-column"
+          className="card-img-overlay d-flex align-items-start flex-column"
           style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
         >
-          <h1 class="card-title">{props.webSiteData.name}</h1>
-          <p class="card-text fs-4">
+          <h1 className="card-title">{props.webSiteData.name}</h1>
+          <p className="card-text fs-4">
             <TypingAnimation texts={props.webSiteData.quotes} speed={100} />|
           </p>
           <Link className="btn btn-lg btn-dark mt-auto" to="/create">
@@ -44,3 +45,17 @@ export default function Home(props) {
     </div>
   );
 }
+
+Home.propTypes = {
+  webSiteData: PropTypes.shape({
+    coverImage: PropTypes.shape({
+      data: PropTypes.shape({
+        attributes: PropTypes.shape({
+          url: PropTypes.string,
+        }),
+      }),
+    }),
+    name: PropTypes.string,
+    quotes: PropTypes.arrayOf(PropTypes.string),
+  }),
+};
