@@ -11,7 +11,7 @@ export default function Navbar({ profile, setUser }) {
     >
       <div className="container py-2">
         <Link to="/user" className="navbar-brand">
-          <img className="img-fluid" style={{ width: "100px" }} src={logo} />
+          <img alt="App logo" className="img-fluid" style={{ width: "100px" }} src={logo} />
         </Link>
         <div className="">
           <Link className="btn btn-outline-light" to="/user/create">
