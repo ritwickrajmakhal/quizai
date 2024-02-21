@@ -1,17 +1,24 @@
+import { googleLogout } from "@react-oauth/google";
 import React from "react";
 import { Link } from "react-router-dom";
+import logo from "./logo.png";
 
 export default function Navbar({ profile, setUser }) {
   return (
-    <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
-      <div class="container">
-        <a class="navbar-brand">Navbar</a>
+    <nav
+      className="navbar bg-dark border-bottom border-body"
+      data-bs-theme="dark"
+    >
+      <div className="container py-2">
+        <Link to="/user" className="navbar-brand">
+          <img className="img-fluid" style={{ width: "100px" }} src={logo} />
+        </Link>
         <div className="">
           <Link className="btn btn-outline-light" to="/user/create">
             Create Quiz
           </Link>
           <img
-            className="img-responsive rounded-circle border border-light mx-4"
+            className="img-fluid rounded-circle border border-light mx-4"
             style={{ width: "50px", height: "50px", cursor: "pointer" }}
             src={profile.picture}
             alt="profile"
@@ -20,21 +27,21 @@ export default function Navbar({ profile, setUser }) {
             aria-controls="offcanvasExample"
           />
           <div
-            class="offcanvas offcanvas-end"
-            tabindex="-1"
+            className="offcanvas offcanvas-end"
+            tabIndex="-1"
             id="offcanvasExample"
             aria-labelledby="offcanvasExampleLabel"
           >
-            <div class="offcanvas-header border-bottom">
+            <div className="offcanvas-header border-bottom">
               <div className="d-flex">
                 <img
-                  className="img-responsive rounded-circle border border-light"
+                  className="img-fluid rounded-circle border border-light"
                   style={{ width: "50px", height: "50px" }}
                   src={profile.picture}
                   alt="profile"
                 />
                 <h5
-                  class="offcanvas-title my-auto mx-2"
+                  className="offcanvas-title my-auto mx-2"
                   id="offcanvasExampleLabel"
                 >
                   {profile.name}
@@ -42,15 +49,16 @@ export default function Navbar({ profile, setUser }) {
               </div>
               <button
                 type="button"
-                class="btn-close"
+                className="btn-close"
                 data-bs-dismiss="offcanvas"
                 aria-label="Close"
               ></button>
             </div>
-            <div class="offcanvas-body">
+            <div className="offcanvas-body">
               <button
                 className="btn btn-danger"
                 onClick={() => {
+                  googleLogout();
                   setUser(null);
                   localStorage.removeItem("user");
                 }}
