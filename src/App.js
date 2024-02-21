@@ -47,7 +47,7 @@ function App() {
       {loading && <PreLoader />}
       <Model modal={modal} setModal={setModal} />
       <BrowserRouter>
-        {user && profile && <Navbar profile={profile} setUser={setUser} />}
+        <Navbar profile={profile} user={user} setUser={setUser} />
         <Routes>
           <Route
             exact

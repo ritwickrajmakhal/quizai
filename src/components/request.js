@@ -4,6 +4,7 @@ const request = async (path, method, data) => {
       method: method,
       headers: {
         "Content-Type": "application/json",
+        "Authorization": "Bearer " + process.env.REACT_APP_STRAPI_API_KEY,
       },
       body: JSON.stringify(data),
     });

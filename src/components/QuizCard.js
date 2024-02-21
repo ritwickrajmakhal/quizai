@@ -25,9 +25,9 @@ export default function QuizCard({ topic, difficultyLevel, type, questions }) {
         </p>
       </div>
       <div className="card-footer">
-        <i class="fa-regular fa-eye btn"></i>
-        <i class="fa-regular fa-trash-can btn"></i>
-        <i class="fa-regular fa-share-from-square btn"></i>
+        <i className="fa-regular fa-eye btn"></i>
+        <i className="fa-regular fa-trash-can btn"></i>
+        <i className="fa-regular fa-share-from-square btn"></i>
       </div>
     </div>
   );

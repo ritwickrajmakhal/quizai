@@ -22,7 +22,7 @@ export default function Home(props) {
   });
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
+    <div className="d-flex justify-content-center my-5">
       {webSiteData && (
         <div className="card text-bg-dark shadow-lg" style={{ width: "30rem" }}>
           <img
