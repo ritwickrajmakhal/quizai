@@ -1,61 +1,57 @@
-import React from "react";
-import { Outlet, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import TypingAnimation from "../TypingAnimation";
-import PreLoader from "../PreLoader/PreLoader";
-import geminiLogo from "./geminiLogo.gif";
 import PropTypes from "prop-types";
+import { useGoogleLogin } from "@react-oauth/google";
+import request from "../request";
 
 export default function Home(props) {
-  // Check if webSiteData exists before accessing its properties
-  if (!props.webSiteData) {
-    return <PreLoader />; // Display a loading indicator while data is being fetched
-  }
+  // Getting data from website's backend api
+  const [webSiteData, setWebSiteData] = useState();
+  useEffect(() => {
+    request("/api/website?populate=*", "GET").then((res) => {
+      setWebSiteData(res.data.attributes);
+    });
+  }, []);
+
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => {
+      props.setUser(codeResponse);
+      localStorage.setItem("user", JSON.stringify(codeResponse));
+    },
+    onError: (error) => {},
+  });
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
-      <div className="card text-bg-dark shadow-lg" style={{ width: "30rem" }}>
-        <img
-          src={
-            process.env.REACT_APP_STRAPI_API_URL +
-            props.webSiteData.coverImage.data.attributes.url
-          }
-          className="card-img image-responsive"
-          alt="Cover"
-        />
+      {webSiteData && (
+        <div className="card text-bg-dark shadow-lg" style={{ width: "30rem" }}>
+          <img
+            src={
+              process.env.REACT_APP_STRAPI_API_URL +
+              webSiteData.coverImage.data.attributes.url
+            }
+            className="card-img img-fluid"
+            alt="Cover"
+          />
 
-        <div
-          className="card-img-overlay d-flex align-items-start flex-column"
-          style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
-        >
-          <h1 className="card-title">{props.webSiteData.name}</h1>
-          <p className="card-text fs-4">
-            <TypingAnimation texts={props.webSiteData.quotes} speed={100} />|
-          </p>
-          <Link className="btn btn-lg btn-dark mt-auto" to="/create">
-            Create{" "}
-            <img
-              alt="gemini logo"
-              className="image-responsive w-25"
-              src={geminiLogo}
-            ></img>
-          </Link>
+          <div
+            className="card-img-overlay d-flex align-items-start flex-column"
+            style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
+          >
+            <h1 className="card-title">{webSiteData.name}</h1>
+            <p className="card-text fs-4">
+              <TypingAnimation texts={webSiteData.quotes} speed={100} />|
+            </p>
+            <button className="btn btn-lg btn-dark mt-auto" onClick={login}>
+              Login with google
+            </button>
+          </div>
         </div>
-      </div>
-      <Outlet />
+      )}
     </div>
   );
 }
 
 Home.propTypes = {
-  webSiteData: PropTypes.shape({
-    coverImage: PropTypes.shape({
-      data: PropTypes.shape({
-        attributes: PropTypes.shape({
-          url: PropTypes.string,
-        }),
-      }),
-    }),
-    name: PropTypes.string,
-    quotes: PropTypes.arrayOf(PropTypes.string),
-  }),
+  setUser: PropTypes.func,
 };

@@ -1,8 +1,0 @@
-.App {
-  background: linear-gradient(45deg, #f06, #9f6, #06f, #f06);
-  animation: gradient 15s ease infinite;
-  height: 100vh;
-  font-family: "Play", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
