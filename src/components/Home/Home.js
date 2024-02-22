@@ -26,10 +26,7 @@ export default function Home(props) {
       {webSiteData && (
         <div className="card text-bg-dark shadow-lg" style={{ width: "30rem" }}>
           <img
-            src={
-              process.env.REACT_APP_STRAPI_API_URL +
-              webSiteData.coverImage.data.attributes.url
-            }
+            src={webSiteData.coverImage.data.attributes.url}
             className="card-img img-fluid"
             alt="Cover"
           />
