@@ -1,29 +1,6 @@
-import React, { useState } from "react";
-import request from "./request";
 import QuizCard from "./QuizCard";
 
-export default function User({ userId }) {
-  const [attemptedQuizzes, setAttemptedQuizzes] = useState();
-  const [createdQuizzes, setCreatedQuizzes] = useState();
-
-  useState(() => {
-    request("/api/quizzes?populate=*", "GET").then((res) => {
-      setCreatedQuizzes(
-        res.data.filter((item) => {
-          return item.attributes.public.data.attributes.userId === userId;
-        })
-      );
-    });
-
-    request("/api/attempts?populate=*", "GET").then((res) => {
-      setAttemptedQuizzes(
-        res.data.filter((item) => {
-          return item.attributes.public.data.attributes.userId === userId;
-        })
-      );
-    });
-  }, [userId]);
-
+export default function User({ setModal, userData }) {
   return (
     <div>
       <div className="accordion" id="accordionExample">
@@ -46,7 +23,7 @@ export default function User({ userId }) {
             data-bs-parent="#accordionExample"
           >
             <div className="accordion-body d-flex flex-wrap">
-              {createdQuizzes?.map((quiz, index) => (
+              {userData?.attributes.quizzes.data?.map((quiz) => (
                 <QuizCard
                   topic={quiz.attributes.topic}
                   difficultyLevel={quiz.attributes.difficultyLevel}
@@ -77,19 +54,18 @@ export default function User({ userId }) {
             data-bs-parent="#accordionExample"
           >
             <div className="accordion-body d-flex flex-wrap">
-              {attemptedQuizzes &&
-                attemptedQuizzes.map((attemptedQuiz) => {
-                  const quiz = attemptedQuiz.attributes.quiz.data.attributes;
-                  return (
-                    <QuizCard
-                      topic={quiz.topic}
-                      difficultyLevel={quiz.difficultyLevel}
-                      type={quiz.type}
-                      questions={quiz.questions}
-                      key={attemptedQuiz.id}
-                    />
-                  );
-                })}
+              {userData?.attributes.attempts.data?.map((attemptedQuiz) => {
+                const quiz = attemptedQuiz.attributes.quiz.data.attributes;
+                return (
+                  <QuizCard
+                    topic={quiz.topic}
+                    difficultyLevel={quiz.difficultyLevel}
+                    type={quiz.type}
+                    questions={quiz.questions}
+                    key={attemptedQuiz.id}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>
