@@ -1,4 +1,6 @@
 import React from "react";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 export default function QuizCard({ topic, difficultyLevel, type, questions }) {
   return (
@@ -25,9 +27,27 @@ export default function QuizCard({ topic, difficultyLevel, type, questions }) {
         </p>
       </div>
       <div className="card-footer">
-        <i className="fa-regular fa-eye btn"></i>
-        <i className="fa-regular fa-trash-can btn"></i>
-        <i className="fa-regular fa-share-from-square btn"></i>
+        <OverlayTrigger
+          placement={"bottom"}
+          overlay={
+            <Tooltip id={`tooltip-bottom`}>
+              <strong>Delete Quiz</strong>
+            </Tooltip>
+          }
+        >
+          <i className="fa-regular fa-trash-can btn"></i>
+        </OverlayTrigger>
+
+        <OverlayTrigger
+          placement={"bottom"}
+          overlay={
+            <Tooltip id={`tooltip-bottom`}>
+              <strong>Copy</strong>
+            </Tooltip>
+          }
+        >
+          <i className="fa-regular fa-share-from-square btn"></i>
+        </OverlayTrigger>
       </div>
     </div>
   );
