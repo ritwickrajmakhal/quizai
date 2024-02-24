@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import TypingAnimation from "../TypingAnimation";
 import PropTypes from "prop-types";
 import { useGoogleLogin } from "@react-oauth/google";
-import request from "../request";
+import request from "../func/request";
 
 export default function Home(props) {
   // Getting data from website's backend api

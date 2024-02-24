@@ -1,15 +1,12 @@
 import QuizCard from "./QuizCard";
 
-export default function User({ setModal, userData }) {
+export default function User({ setAlert, userDataChanged, setUserDataChanged, setModal, userData }) {
   return (
     <div>
       <div className="accordion" id="accordionExample">
         <div className="accordion-item">
           <h2 className="accordion-header">
-            <button
-              className="accordion-button"
-              type="button"
-              data-bs-toggle="collapse"
+            <button className="accordion-button" type="button" data-bs-toggle="collapse"
               data-bs-target="#collapseOne"
               aria-expanded="true"
               aria-controls="collapseOne"
@@ -22,14 +19,16 @@ export default function User({ setModal, userData }) {
             className="accordion-collapse collapse show"
             data-bs-parent="#accordionExample"
           >
-            <div className="accordion-body d-flex flex-wrap">
-              {userData?.attributes.quizzes.data?.map((quiz) => (
+            <div className="accordion-body d-flex flex-wrap ">
+              {userData?.attributes.quizzes.data?.map((quiz, index) => (
                 <QuizCard
-                  topic={quiz.attributes.topic}
-                  difficultyLevel={quiz.attributes.difficultyLevel}
-                  type={quiz.attributes.type}
-                  questions={quiz.attributes.questions}
-                  key={quiz.id}
+                  key={index}
+                  setAlert={setAlert}
+                  type="created"
+                  userDataChanged={userDataChanged}
+                  setUserDataChanged={setUserDataChanged}
+                  setModal={setModal}
+                  quiz={quiz}
                 />
               ))}
             </div>
@@ -54,15 +53,13 @@ export default function User({ setModal, userData }) {
             data-bs-parent="#accordionExample"
           >
             <div className="accordion-body d-flex flex-wrap">
-              {userData?.attributes.attempts.data?.map((attemptedQuiz) => {
-                const quiz = attemptedQuiz.attributes.quiz.data.attributes;
+              {userData?.attributes.attempts.data?.map((attemptedQuiz, index) => {
                 return (
                   <QuizCard
-                    topic={quiz.topic}
-                    difficultyLevel={quiz.difficultyLevel}
-                    type={quiz.type}
-                    questions={quiz.questions}
-                    key={attemptedQuiz.id}
+                    key={index}
+                    type="attempted"
+                    setModal={setModal}
+                    quiz={attemptedQuiz}
                   />
                 );
               })}

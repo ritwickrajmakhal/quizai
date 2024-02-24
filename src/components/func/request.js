@@ -4,7 +4,7 @@ const request = async (path, method, data) => {
       method: method,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + process.env.REACT_APP_STRAPI_API_KEY,
+        Authorization: "Bearer " + process.env.REACT_APP_STRAPI_API_KEY,
       },
       body: JSON.stringify(data),
     });
@@ -14,11 +14,7 @@ const request = async (path, method, data) => {
     }
 
     return response.json();
-  } catch (error) {
-    // Handle the error here
-    console.error("Error:", error);
-    throw error; // Rethrow the error if necessary
-  }
+  } catch (error) { }
 };
 
 module.exports = request;
