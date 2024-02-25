@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
+import QRCode from "qrcode.react";
 
 export default function Share({ url }) {
   const [copied, setCopied] = useState(false);
-  
+
   const shareOnSocialMedia = (platform) => {
     const message = "Hey! Check out this quiz I created on Quiz App: ";
     let socialMediaURL = "";
@@ -45,6 +46,9 @@ export default function Share({ url }) {
 
   return (
     <div>
+      <div className="mb-3 d-flex justify-content-center">
+        <QRCode value={url} />
+      </div>
       <div className="d-flex justify-content-center">
         {["whatsapp", "facebook", "twitter", "linkedin"].map((platform, index) => (
           <OverlayTrigger
