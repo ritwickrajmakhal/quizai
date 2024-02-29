@@ -47,7 +47,7 @@ export default function Share({ url }) {
   return (
     <div>
       <div className="mb-3 d-flex justify-content-center">
-        <QRCode value={url} />
+        <QRCode style={{ border: '1px solid black', padding: '2px' }} value={url} />
       </div>
       <div className="d-flex justify-content-center">
         {["whatsapp", "facebook", "twitter", "linkedin"].map((platform, index) => (

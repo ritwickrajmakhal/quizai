@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import TypingAnimation from "../TypingAnimation";
 import PropTypes from "prop-types";
 import { useGoogleLogin } from "@react-oauth/google";
-import request from "../func/request";
+import request from "../../func/request";
 
 export default function Home(props) {
   // Getting data from website's backend api
   const [webSiteData, setWebSiteData] = useState();
   useEffect(() => {
     request("/api/website?populate=*", "GET").then((res) => {
-      setWebSiteData(res.data.attributes);
+      setWebSiteData(res?.data.attributes);
     });
   }, []);
 

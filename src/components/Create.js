@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
 import Slider from "./Slider";
-import PreLoader from "./PreLoader/PreLoader";
-import request from "./func/request";
+import request from "../func/request";
 import Share from "./Share";
-import { encrypt } from "./func/encryptDecrypt";
+import { encrypt } from "../func/encryptDecrypt";
 
-export default function Create({ setAlert, userDataChanged, setUserDataChanged, userData, setModal }) {
+export default function Create({ setPreLoader, setAlert, userId, setModal }) {
   // States to store quiz parameters
   const [quizParams, setQuizParams] = useState({
     inputType: "topic",
@@ -14,6 +13,7 @@ export default function Create({ setAlert, userDataChanged, setUserDataChanged, 
     questionsType: "MCQ",
     difficultyLevel: "easy",
     numberOfQuestions: 1,
+    public: userId,
   });
   const handleInputChange = (event) => {
     setQuizParams((prev) => ({
@@ -21,16 +21,15 @@ export default function Create({ setAlert, userDataChanged, setUserDataChanged, 
       [event.target.name]: event.target.value,
     }));
   };
+
   const [questions, setQuestions] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [editEnabled, setEditEnabled] = useState(true);
   const [quizId, setQuizId] = useState(null);
 
   // Function to handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setLoading(true);
-    const prompt = require("./func/prompt");
+    setPreLoader("Generating...");
+    const prompt = require("../func/prompt");
     let questionsTypeFullForm = "";
     switch (quizParams.questionsType) {
       case "MCQ":
@@ -52,49 +51,60 @@ export default function Create({ setAlert, userDataChanged, setUserDataChanged, 
         questionsTypeFullForm = "Multiple Choice Question";
     }
     let promptText = "";
-    if (quizParams.questionsType === "MCQ" || quizParams.questionsType === "MSQ") {
+    if (
+      quizParams.questionsType === "MCQ" ||
+      quizParams.questionsType === "MSQ"
+    ) {
       promptText = `Strictly create a JSON format containing ${quizParams.numberOfQuestions} ${questionsTypeFullForm} using the following JSON format:[{"question" : "question statement","options" : ["option1", "option2", "option3", "option4"],"correct_ans" : ["option"]}] from the ${quizParams.inputType} "${quizParams.inputValue}" of difficulty level ${quizParams.difficultyLevel}.`;
     } else {
-      promptText = `Strictly create a JSON format containing ${quizParams.numberOfQuestions} ${questionsTypeFullForm} using the following JSON format:[{"question" : "question statement","answer" : "answer", "time" : expected time to solve the question in minutes}] from the ${quizParams.inputType} "${quizParams.inputValue}" of difficulty level ${quizParams.difficultyLevel}.`;
+      promptText = `Strictly create a JSON format containing ${quizParams.numberOfQuestions} ${questionsTypeFullForm} using the following JSON format:[{"question" : "question statement","correct_ans" : "complete answer for this question", "time" : expected time to solve the question in minutes}] from the ${quizParams.inputType} "${quizParams.inputValue}" of difficulty level ${quizParams.difficultyLevel}.`;
     }
     const response = await prompt(promptText);
     setQuestions(response);
-    setLoading(false);
+    setPreLoader(null);
   };
 
   // Function to publish and share quiz
-  const shareQuiz = async () => {
+  const shareQuiz = () => {
     if (!quizId) {
-      setLoading(true);
-      try {
-        const data = {
-          data: {
-            ...quizParams,
-            questions: questions,
-            public: userData.id,
-          },
-        };
-        const res = await request("/api/quizzes", "POST", data);
-        setUserDataChanged(!userDataChanged);
-        const encryptedQuizId = encrypt(res.data.id);
-        setQuizId(encryptedQuizId);
-        setEditEnabled(false);
-        setModal({
-          title: "Share Quiz",
-          body: (
-            <Share url={`${window.location.origin}/attempt?qid=${encodeURIComponent(encryptedQuizId)}`} />
-          ),
-          footer: null,
+      setPreLoader("Saving...");
+      request("/api/quizzes", "POST", {
+        data: quizParams,
+      })
+        .then((res) => {
+          request("/api/questions", "POST", {
+            data: { questions: questions, quiz: res.data.id },
+          });
+          const encryptedQuizId = encrypt(res.data.id);
+          setQuizId(encryptedQuizId);
+          setModal({
+            title: "Share Quiz",
+            body: (
+              <Share
+                url={`${
+                  window.location.origin
+                }/attempt?qid=${encodeURIComponent(encryptedQuizId)}`}
+              />
+            ),
+            footer: null,
+          });
+        })
+        .catch((err) => {
+          console.error("Error publishing quiz:", err);
+        })
+        .finally(() => {
+          setPreLoader(null);
         });
-      } catch (error) {
-        console.error("Error publishing quiz:", error);
-      } finally {
-        setLoading(false);
-      }
     } else {
       setModal({
         title: "Share Quiz",
-        body: <Share url={`${window.location.origin}/attempt?qid=${encodeURIComponent(quizId)}`} />,
+        body: (
+          <Share
+            url={`${window.location.origin}/attempt?qid=${encodeURIComponent(
+              quizId
+            )}`}
+          />
+        ),
         footer: null,
       });
     }
@@ -102,32 +112,32 @@ export default function Create({ setAlert, userDataChanged, setUserDataChanged, 
 
   return (
     <>
-      {loading && <PreLoader />}
-      {questions && <div className="d-flex justify-content-around my-3">
-        <button
-          onClick={() => {
-            setQuestions(null);
-            setQuizId(null);
-            setEditEnabled(true);
-          }}
-          className="btn btn-danger"
-        >
-          Regenerate <i className="fa-solid fa-arrow-rotate-right"></i>
-        </button>
-        <button
-          onClick={() => shareQuiz()}
-          className="btn btn-success"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
-        >
-          Share <i className="fa-solid fa-arrow-up-from-bracket"></i>
-        </button>
-      </div>}
+      {questions && (
+        <div className="d-flex justify-content-around my-3">
+          <button
+            onClick={() => {
+              setQuestions(null);
+              setQuizId(null);
+            }}
+            className="btn btn-danger"
+          >
+            Regenerate <i className="fa-solid fa-arrow-rotate-right"></i>
+          </button>
+          <button
+            onClick={() => shareQuiz()}
+            className="btn btn-success"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
+          >
+            Share <i className="fa-solid fa-arrow-up-from-bracket"></i>
+          </button>
+        </div>
+      )}
       <div className="d-flex justify-content-center">
         {questions ? (
           <Slider
+            editable={true}
             setAlert={setAlert}
-            editEnabled={editEnabled}
             questionsType={quizParams.questionsType}
             questions={questions}
             setQuestions={setQuestions}
@@ -137,7 +147,6 @@ export default function Create({ setAlert, userDataChanged, setUserDataChanged, 
             <div className="card-body">
               <h5 className="card-title">Create a new quiz</h5>
               <form onSubmit={(event) => handleSubmit(event)}>
-
                 {/* Input type: Topic or Text */}
                 <div className="mb-3">
                   <select
@@ -216,9 +225,7 @@ export default function Create({ setAlert, userDataChanged, setUserDataChanged, 
                   <input
                     name="numberOfQuestions"
                     value={quizParams.numberOfQuestions}
-                    onChange={(event) =>
-                      handleInputChange(event)
-                    }
+                    onChange={(event) => handleInputChange(event)}
                     min={1}
                     type="number"
                     className="form-control"

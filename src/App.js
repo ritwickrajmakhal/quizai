@@ -7,14 +7,14 @@ import axios from "axios";
 import User from "./components/User";
 import Create from "./components/Create";
 import Navbar from "./components/Navbar/Navbar";
-import request from "./components/func/request";
+import request from "./func/request";
 import PreLoader from "./components/PreLoader/PreLoader";
 import Attempt from "./components/Attempt";
 import Alert from "./components/Alert";
 
 function App() {
   const [modal, setModal] = useState({ title: null, body: null });
-  const [loading, setLoading] = useState(false);
+  const [preLoader, setPreLoader] = useState(null);
 
   const [alert, setAlert] = useState(); // State to store alert message {message:"", type:""}
   useEffect(() => {
@@ -29,8 +29,8 @@ function App() {
   const [profile, setProfile] = useState(null);
   // Fetch the user's profile data from the Google API
   useEffect(() => {
-    setLoading(true);
     if (user) {
+      setPreLoader("Gathering your data...");
       axios
         .get(
           `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
@@ -42,64 +42,108 @@ function App() {
           }
         )
         .then((res) => {
-          setProfile(res.data);
           request("/api/publics", "POST", {
-            data: { userId: res.data.id },
-          }).catch((err) => { });
+            data: {
+              userId: res.data.id,
+              name: res.data.name,
+            },
+          }).catch((err) => {});
+          setProfile(res.data);
         })
         .catch((err) => {
           setUser(null);
+        })
+        .finally(() => {
+          setPreLoader(null);
         });
     }
-    setLoading(false);
   }, [user]);
 
   const [userData, setUserData] = useState(null);
-  const [userDataChanged, setUserDataChanged] = useState(false);
   useEffect(() => {
     if (profile) {
-      request(
-        `/api/publics?filters[userId][$eq]=${profile.id}&populate=*`,
-        "GET"
-      ).then((res) => {
-        setUserData(res.data[0]);
-      });
+      setPreLoader("Gathering quizzes data...");
+      request(`/api/publics?filters[userId][$eq]=${profile.id}`, "GET")
+        .then((res) => {
+          setUserData(res.data[0]);
+        })
+        .finally(() => {
+          setPreLoader(null);
+        });
     }
-  }, [profile, userDataChanged]);
+  }, [profile]);
 
   return (
     <div className="App">
-      {loading && <PreLoader />}
+      {preLoader && <PreLoader msg={preLoader} />}
       <Model modal={modal} setModal={setModal} />
       <BrowserRouter>
         <Navbar profile={profile} user={user} setUser={setUser} />
-        <Alert alert={alert} />
+        <Alert alert={alert} setAlert={setAlert} />
         <Routes>
-          <Route exact path="/" element={user ?
-            (profile && <Navigate replace to="/user" />)
-            : (<Home setUser={setUser} />)}
+          <Route
+            exact
+            path="/"
+            element={
+              user ? (
+                profile && <Navigate replace to="/user" />
+              ) : (
+                <Home setUser={setUser} />
+              )
+            }
           />
-          <Route exact path="/user" element={user ?
-            (userData && (
-              <User
-                setAlert={setAlert}
-                userDataChanged={userDataChanged}
-                setUserDataChanged={setUserDataChanged}
-                setModal={setModal}
-                userData={userData} />))
-            :
-            (<Navigate to="/" />)} />
-          <Route exact path="/user/create" element={user ?
-            (userData &&
-              <Create
-                setAlert={setAlert}
-                userDataChanged={userDataChanged}
-                setUserDataChanged={setUserDataChanged}
-                userData={userData}
-                setModal={setModal} />)
-            :
-            (<Navigate to="/" />)} />
-          <Route exact path="/attempt" element={user ? (userData && <Attempt />) : (<Navigate to="/" />)} />
+          <Route
+            exact
+            path="/user"
+            element={
+              user ? (
+                userData && (
+                  <User
+                    setModal={setModal}
+                    userId={userData.id}
+                    setAlert={setAlert}
+                  />
+                )
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+          <Route
+            exact
+            path="/user/create"
+            element={
+              user ? (
+                userData && (
+                  <Create
+                    setPreLoader={setPreLoader}
+                    setAlert={setAlert}
+                    userId={userData.id}
+                    setModal={setModal}
+                  />
+                )
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
+          <Route
+            exact
+            path="/attempt"
+            element={
+              user ? (
+                userData && (
+                  <Attempt
+                    userId={userData.id}
+                    setAlert={setAlert}
+                    setPreLoader={setPreLoader}
+                  />
+                )
+              ) : (
+                <Navigate to="/" />
+              )
+            }
+          />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>

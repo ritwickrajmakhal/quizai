@@ -12,7 +12,11 @@ export default function Modal({ modal, setModal }) {
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
     >
-      <div className="modal-dialog modal-dialog-centered">
+      <div
+        className={`modal-dialog modal-${
+          modal.style ? modal.style : "dialog-centered"
+        }`}
+      >
         <div className="modal-content">
           <div className="modal-header">
             <h1 className="modal-title fs-5" id="exampleModalLabel">
@@ -38,7 +42,7 @@ export default function Modal({ modal, setModal }) {
             </OverlayTrigger>
           </div>
           <div className="modal-body">{modal.body}</div>
-          <div className="modal-footer">{modal.footer}</div>
+          {modal.footer}
         </div>
       </div>
     </div>
