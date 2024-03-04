@@ -17,7 +17,7 @@ const CountdownTimer = ({ time, countdownCompleted, onCountdownComplete }) => {
     }, 1000);
 
     return () => clearInterval(countdownInterval);
-  }, [seconds, onCountdownComplete]);
+  }, [seconds, onCountdownComplete, countdownCompleted]);
 
   const formatTime = () => {
     const hours = Math.floor(seconds / 3600);

@@ -6,12 +6,7 @@ import request from "../func/request";
 import Share from "./Share";
 import { encrypt } from "../func/encryptDecrypt";
 
-export default function QuizCard({
-  quiz,
-  setModal,
-  handleModified,
-  setAlert,
-}) {
+export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
   const [questions, setQuestions] = useState(() => {
     request(`/api/questions?filters[quiz][id][$eq]=${quiz.id}`, "GET").then(
       (res) => {
@@ -71,7 +66,7 @@ export default function QuizCard({
                                   "GET"
                                 ).then((res) => {
                                   // delete all attempts
-                                  res.data.map((item) => {
+                                  res.data.forEach((item) => {
                                     request(
                                       `/api/attempts/${item.id}`,
                                       "DELETE"

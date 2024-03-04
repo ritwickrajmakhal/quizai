@@ -114,7 +114,9 @@ export default function Slider({
                       className="form-check-input"
                       type="radio"
                       readOnly={readOnly || editable}
-                      checked={questions[questionIndex].correct_ans == option}
+                      checked={questions[questionIndex].correct_ans.includes(
+                        option
+                      )}
                       name="flexRadioDefault"
                       id={`flexRadioDefault${index}`}
                     />
@@ -152,7 +154,7 @@ export default function Slider({
                       }
                     }}
                     id={`flexRadioDefault${index}`}
-                    checked={questions[questionIndex].ans == option}
+                    checked={questions[questionIndex].ans?.includes(option)}
                   />
                   <label
                     className="form-check-label"

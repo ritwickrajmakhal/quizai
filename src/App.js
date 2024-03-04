@@ -15,8 +15,12 @@ import Alert from "./components/Alert";
 function App() {
   const [modal, setModal] = useState({ title: null, body: null });
   const [preLoader, setPreLoader] = useState(null);
-
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [profile, setProfile] = useState(null);
   const [alert, setAlert] = useState(); // State to store alert message {message:"", type:""}
+  const [userData, setUserData] = useState(null);
+
+  // close alert after 3s
   useEffect(() => {
     if (alert) {
       setTimeout(() => {
@@ -25,8 +29,6 @@ function App() {
     }
   }, [alert]);
 
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
-  const [profile, setProfile] = useState(null);
   // Fetch the user's profile data from the Google API
   useEffect(() => {
     if (user) {
@@ -59,7 +61,7 @@ function App() {
     }
   }, [user]);
 
-  const [userData, setUserData] = useState(null);
+  // Fetch quizzes data
   useEffect(() => {
     if (profile) {
       setPreLoader("Gathering quizzes data...");
@@ -84,6 +86,7 @@ function App() {
           <Route
             exact
             path="/"
+            index
             element={
               user ? (
                 profile && <Navigate replace to="/user" />

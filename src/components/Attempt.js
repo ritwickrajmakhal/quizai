@@ -137,15 +137,8 @@ export default function Attempt({ userId, setPreLoader, setAlert }) {
                 return res.json();
               })
               .then((res) => {
-                console.log(res);
                 // Assuming res[0] contains the score
                 question.score = res[0] > 0.5 ? 1 : 0;
-              })
-              .catch((error) => {
-                console.error(
-                  "There was a problem with the fetch operation:",
-                  error
-                );
               });
 
             fetchPromises.push(fetchPromise); // Push the fetch promise to the array
@@ -153,18 +146,19 @@ export default function Attempt({ userId, setPreLoader, setAlert }) {
         });
 
         // Use Promise.all() to wait for all fetch promises to resolve
-        Promise.all(fetchPromises)
-          .then(() => {
-            setAttemptEvaluated(true); // Set attempt evaluation flag after all scores are retrieved
-          })
-          .catch((error) => {
-            console.error("Error occurred while fetching scores:", error);
-          });
+        Promise.all(fetchPromises).then(() => {
+          setAttemptEvaluated(true); // Set attempt evaluation flag after all scores are retrieved
+        });
 
         return newQuestions;
       });
     }
-  }, [countdownCompleted, setPreLoader, quiz, attempted]);
+  }, [
+    countdownCompleted,
+    setPreLoader,
+    quiz,
+    attempted,
+  ]);
 
   useEffect(() => {
     if (attemptEvaluated && !attempted) {
