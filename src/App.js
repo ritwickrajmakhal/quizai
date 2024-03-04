@@ -120,7 +120,6 @@ function App() {
                 userData && (
                   <Create
                     setPreLoader={setPreLoader}
-                    setAlert={setAlert}
                     userId={userData.id}
                     setModal={setModal}
                   />

@@ -5,7 +5,7 @@ import request from "../func/request";
 import Share from "./Share";
 import { encrypt } from "../func/encryptDecrypt";
 
-export default function Create({ setPreLoader, setAlert, userId, setModal }) {
+export default function Create({ setPreLoader, userId, setModal }) {
   // States to store quiz parameters
   const [quizParams, setQuizParams] = useState({
     inputType: "topic",
@@ -113,7 +113,7 @@ export default function Create({ setPreLoader, setAlert, userId, setModal }) {
   return (
     <>
       {questions && (
-        <div className="d-flex justify-content-around my-3">
+        <div className="d-flex justify-content-around mt-3">
           <button
             onClick={() => {
               setQuestions(null);
@@ -137,7 +137,6 @@ export default function Create({ setPreLoader, setAlert, userId, setModal }) {
         {questions ? (
           <Slider
             editable={true}
-            setAlert={setAlert}
             questionsType={quizParams.questionsType}
             questions={questions}
             setQuestions={setQuestions}

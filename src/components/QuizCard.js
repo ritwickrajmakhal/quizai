@@ -7,10 +7,12 @@ import Share from "./Share";
 import { encrypt } from "../func/encryptDecrypt";
 
 export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
+  const [questionId, setQuestionId] = useState();
   const [questions, setQuestions] = useState(() => {
     request(`/api/questions?filters[quiz][id][$eq]=${quiz.id}`, "GET").then(
       (res) => {
         setQuestions(res.data[0]?.attributes.questions);
+        setQuestionId(res.data[0]?.id);
       }
     );
   });
@@ -29,7 +31,6 @@ export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
               <Slider
                 readOnly={true}
                 questions={questions}
-                setQuestions={setQuestions}
                 questionsType={quiz.questionsType}
               />
             ),
@@ -70,8 +71,12 @@ export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
                                     request(
                                       `/api/attempts/${item.id}`,
                                       "DELETE"
-                                    ).then((res) => {});
+                                    );
                                   });
+                                  request(
+                                    `/api/questions/${questionId}`,
+                                    "DELETE"
+                                  );
                                 });
                                 // delete this quiz
                                 request(

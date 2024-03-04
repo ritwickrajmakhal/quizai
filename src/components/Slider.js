@@ -64,7 +64,7 @@ export default function Slider({
   };
 
   return (
-    <div className="container">
+    <div className="container my-4">
       <Alert alert={alert} setAlert={setAlert} />
       <div className="card" style={{ minWidth: "70%" }}>
         {header}

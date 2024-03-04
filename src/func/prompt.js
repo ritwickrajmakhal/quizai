@@ -51,7 +51,6 @@ const prompt = async (text) => {
     });
 
     const response = result.response.text().toString();
-    console.log(response);
     // Find index positions of '[' and ']'
     const startIndex = response.indexOf("[");
     const endIndex = response.lastIndexOf("]");
