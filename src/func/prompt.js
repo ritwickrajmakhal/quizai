@@ -4,20 +4,12 @@ const {
   HarmBlockThreshold,
 } = require("@google/generative-ai");
 
-const prompt = async (text) => {
-  const MODEL_NAME = "gemini-pro";
+const prompt = async (MODEL_NAME, generationConfig, parts) => {
   const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
 
   try {
     const genAI = new GoogleGenerativeAI(API_KEY);
     const model = genAI.getGenerativeModel({ model: MODEL_NAME });
-
-    const generationConfig = {
-      temperature: 0.9,
-      topK: 1,
-      topP: 1,
-      maxOutputTokens: 4096,
-    };
 
     const safetySettings = [
       {
@@ -35,12 +27,6 @@ const prompt = async (text) => {
       {
         category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
         threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-      },
-    ];
-
-    const parts = [
-      {
-        text: text,
       },
     ];
 
