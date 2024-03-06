@@ -1,0 +1,18 @@
+@keyframes backgroundScroll {
+  0% {
+    background-size: auto 100%;
+    /* Starting position: Background covers twice the height of the body */
+  }
+  100% {
+    background-size: auto 200%;
+    /* Ending position: Background covers half the height of the body */
+  }
+}
+
+.App {
+  height: 100vh;
+  background: url("bg.png");
+  background-repeat: no-repeat;
+  background-size: cover; /* Initial size */
+  animation: backgroundScroll 20s linear infinite alternate; /* Adjust timing as needed */
+}

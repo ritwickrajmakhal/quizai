@@ -6,8 +6,9 @@ import logo from "./logo.png";
 export default function Navbar({ profile, user, setUser }) {
   return (
     <nav
-      className="navbar bg-dark border-bottom border-body"
+      className="navbar border-body"
       data-bs-theme="dark"
+      style={{ background: "transparent" }}
     >
       <div className="container py-2">
         <Link to="/user" className="navbar-brand">

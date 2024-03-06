@@ -24,7 +24,7 @@ export default function Home(props) {
   return (
     <div className="d-flex justify-content-center my-5">
       {webSiteData && (
-        <div className="card text-bg-dark shadow-lg" style={{ width: "30rem" }}>
+        <div className="card text-bg-dark shadow-lg" style={{ width: "35rem" }}>
           <img
             src={webSiteData.coverImage.data.attributes.url}
             className="card-img img-fluid"
@@ -40,7 +40,7 @@ export default function Home(props) {
               <TypingAnimation texts={webSiteData.quotes} speed={100} />|
             </p>
             <button className="btn btn-lg btn-dark mt-auto" onClick={login}>
-              Login with google
+              <i className="fa-brands fa-google"></i> Login with Google
             </button>
           </div>
         </div>
