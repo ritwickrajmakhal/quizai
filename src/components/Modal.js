@@ -11,6 +11,7 @@ export default function Modal({ modal, setModal }) {
       tabIndex="-1"
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
+      data-bs-theme="dark"
     >
       <div
         className={`modal-dialog modal-${
@@ -35,7 +36,7 @@ export default function Modal({ modal, setModal }) {
                 onClick={() =>
                   setModal({ title: null, body: null, footer: null })
                 }
-                className="btn-close"
+                className="btn btn-close btn-outline-danger"
                 data-bs-dismiss="modal"
                 aria-label="Close"
               ></button>

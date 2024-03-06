@@ -299,7 +299,7 @@ export default function Slider({
             >
               <i
                 onClick={(event) => goToPrevious(event)}
-                className="btn btn-outline-primary fs-3 fa-solid fa-angle-left"
+                className="btn btn-outline-primary rounded-circle fs-3 fa-solid fa-angle-left"
               ></i>
             </OverlayTrigger>
           ) : (
@@ -332,7 +332,7 @@ export default function Slider({
             >
               <i
                 onClick={(event) => goToNext(event)}
-                className="btn btn-outline-primary fs-3 fa-solid fa-angle-right"
+                className="btn btn-outline-primary rounded-circle fs-3 fa-solid fa-angle-right"
               ></i>
             </OverlayTrigger>
           ) : (

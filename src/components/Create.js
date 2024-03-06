@@ -226,7 +226,7 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
   };
 
   return (
-    <>
+    <div data-bs-theme="dark">
       {questions && (
         <div className="d-flex justify-content-around mt-3">
           <button
@@ -390,6 +390,6 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
