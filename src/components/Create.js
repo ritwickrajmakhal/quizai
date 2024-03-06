@@ -1,26 +1,79 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import Slider from "./Slider";
 import request from "../func/request";
 import Share from "./Share";
 import { encrypt } from "../func/encryptDecrypt";
 
-export default function Create({ setPreLoader, userId, setModal }) {
+const convertBlobToBase64 = (blob) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = (event) => {
+      resolve(reader.result);
+    };
+    reader.readAsDataURL(blob);
+  });
+};
+
+export default function Create({ setPreLoader, userId, setModal, setAlert }) {
   // States to store quiz parameters
   const [quizParams, setQuizParams] = useState({
     inputType: "topic",
-    inputValue: "",
+    inputValue: [],
     questionsType: "MCQ",
     difficultyLevel: "easy",
     numberOfQuestions: 1,
     public: userId,
   });
+
   const handleInputChange = (event) => {
-    setQuizParams((prev) => ({
-      ...prev,
-      [event.target.name]: event.target.value,
-    }));
+    const { name, files, value } = event.target;
+
+    if (quizParams.inputType === "images" && files) {
+      const maxSize = 4 * 1024 * 1024; // 4 MB limit
+      const selectedFiles = Array.from(files);
+
+      // Check each selected file's size
+      const oversizedFiles = selectedFiles.filter(
+        (file) => file.size > maxSize
+      );
+
+      if (oversizedFiles.length > 0) {
+        // Display an error message or handle oversized files appropriately
+        setAlert({
+          message:
+            "Error: One or more files exceed the size limit. Maximum file size is 4MB",
+          type: "danger",
+        });
+        return;
+      }
+
+      // Create URLs for files that passed the size check
+      const paths = selectedFiles.map((file) => URL.createObjectURL(file));
+      setQuizParams((prev) => ({ ...prev, [name]: paths }));
+    } else {
+      setQuizParams((prev) => ({ ...prev, [name]: value }));
+    }
   };
+
+  // convert all images to Base 64
+  const [images, setImages] = useState();
+  useEffect(() => {
+    if (quizParams.inputType === "images" && quizParams.inputValue) {
+      const fetchImages = async () => {
+        const images = await Promise.all(
+          quizParams.inputValue?.map(async (imageUrl) => {
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            return convertBlobToBase64(blob);
+          })
+        );
+        setImages(images);
+      };
+      fetchImages();
+    }
+  }, [quizParams.inputType, quizParams.inputValue]);
 
   const [questions, setQuestions] = useState(null);
   const [quizId, setQuizId] = useState(null);
@@ -33,33 +86,95 @@ export default function Create({ setPreLoader, userId, setModal }) {
     let questionsTypeFullForm = "";
     switch (quizParams.questionsType) {
       case "MCQ":
-        questionsTypeFullForm = "Multiple Choice Question";
+        questionsTypeFullForm = "Multiple Choice Question(s)";
         break;
       case "MSQ":
-        questionsTypeFullForm = "Multiple Select Question";
+        questionsTypeFullForm = "Multiple Select Question(s)";
         break;
       case "NAT":
-        questionsTypeFullForm = "Numerical Answer Type";
+        questionsTypeFullForm = "Numerical Answer Type Question(s)";
         break;
       case "SAQ":
-        questionsTypeFullForm = "Short Answer type Question";
+        questionsTypeFullForm = "Short Answer type Question(s)";
         break;
       case "LAQ":
-        questionsTypeFullForm = "Long Answer type Question";
+        questionsTypeFullForm = "Long Answer type Question(s)";
         break;
       default:
-        questionsTypeFullForm = "Multiple Choice Question";
+        questionsTypeFullForm = "Multiple Choice Question(s)";
     }
-    let promptText = "";
+    let parts = [];
+    const generationConfig =
+      quizParams.inputType === "images"
+        ? {
+            temperature: 0.4,
+            topK: 32,
+            topP: 1,
+            maxOutputTokens: 4096,
+          }
+        : {
+            temperature: 0.9,
+            topK: 1,
+            topP: 1,
+            maxOutputTokens: 4096,
+          };
+    const MODEL_NAME =
+      quizParams.inputType === "images"
+        ? "gemini-1.0-pro-vision-latest"
+        : "gemini-1.0-pro";
     if (
       quizParams.questionsType === "MCQ" ||
       quizParams.questionsType === "MSQ"
     ) {
-      promptText = `Strictly create a JSON format containing ${quizParams.numberOfQuestions} ${questionsTypeFullForm} using the following JSON format:[{"question" : "question statement","options" : ["option1", "option2", "option3", "option4"],"correct_ans" : ["option"]}] from the ${quizParams.inputType} "${quizParams.inputValue}" of difficulty level ${quizParams.difficultyLevel}.`;
+      if (quizParams.inputType === "images") {
+        parts = [
+          {
+            text: `Strictly create only a JSON format containing ${quizParams.numberOfQuestions} ${questionsTypeFullForm} strictly using the following JSON format:\n[{question" : "question statement","options" : ["option1", "option2", "option3", "option4"],"correct_ans" : ["option"]\n}] from the image `,
+          },
+          images.map((image) => {
+            const base64Data = image.split(",")[1]; // Extract Base64 data
+            return {
+              inlineData: {
+                mimeType: "image/png",
+                data: base64Data,
+              },
+            };
+          }),
+          { text: ` of difficulty level ${quizParams.difficultyLevel}.` },
+        ];
+      } else {
+        parts = [
+          {
+            text: `Strictly create a JSON format containing ${quizParams.numberOfQuestions} ${questionsTypeFullForm} using the following JSON format:[{"question" : "question statement","options" : ["option1", "option2", "option3", "option4"],"correct_ans" : ["option"]}] from the ${quizParams.inputType} "${quizParams.inputValue}" of difficulty level ${quizParams.difficultyLevel}.`,
+          },
+        ];
+      }
     } else {
-      promptText = `Strictly create a JSON format containing ${quizParams.numberOfQuestions} ${questionsTypeFullForm} using the following JSON format:[{"question" : "question statement","correct_ans" : "complete answer for this question", "time" : expected time to solve the question in minutes}] from the ${quizParams.inputType} "${quizParams.inputValue}" of difficulty level ${quizParams.difficultyLevel}.`;
+      if (quizParams.inputType === "images") {
+        parts = [
+          {
+            text: `Strictly create only a JSON format containing ${quizParams.numberOfQuestions} ${questionsTypeFullForm} using the following JSON format:\n[{"question" : "question statement","correct_ans" : "complete answer for this question", "time" : expected time to solve the question in minutes}] from the image `,
+          },
+          images.map((image) => {
+            const base64Data = image.split(",")[1]; // Extract Base64 data
+            return {
+              inlineData: {
+                mimeType: "image/png",
+                data: base64Data,
+              },
+            };
+          }),
+          { text: ` of difficulty level ${quizParams.difficultyLevel}.` },
+        ];
+      } else {
+        parts = [
+          {
+            text: `Strictly create a JSON format containing ${quizParams.numberOfQuestions} ${questionsTypeFullForm} using the following JSON format:[{"question" : "question statement","correct_ans" : "complete answer for this question", "time" : expected time to solve the question in minutes}] from the ${quizParams.inputType} "${quizParams.inputValue}" of difficulty level ${quizParams.difficultyLevel}.`,
+          },
+        ];
+      }
     }
-    const response = await prompt(promptText);
+    const response = await prompt(MODEL_NAME, generationConfig, parts);
     setQuestions(response);
     setPreLoader(null);
   };
@@ -159,25 +274,56 @@ export default function Create({ setPreLoader, userId, setModal }) {
                   >
                     <option value="topic">Topic</option>
                     <option value="text">Text</option>
+                    <option value="images">Image</option>
                   </select>
                 </div>
 
                 {/* Input value for the selected input type */}
-                <div className="form-floating mb-3">
-                  <textarea
-                    value={quizParams.inputValue}
-                    name="inputValue"
-                    onChange={(event) => handleInputChange(event)}
-                    className="form-control"
-                    placeholder="Leave a comment here"
-                    id="floatingTextarea2"
-                    style={{ height: "100px" }}
-                    required
-                  ></textarea>
-                  <label htmlFor="floatingTextarea2">
-                    Enter your {quizParams.inputType}
-                  </label>
-                </div>
+                {quizParams.inputType !== "images" ? (
+                  <div className="form-floating mb-3">
+                    <textarea
+                      value={quizParams.inputValue}
+                      name="inputValue"
+                      onChange={(event) => handleInputChange(event)}
+                      className="form-control"
+                      placeholder="Leave a comment here"
+                      id="floatingTextarea2"
+                      style={{ height: "100px" }}
+                      required
+                    ></textarea>
+                    <label htmlFor="floatingTextarea2">
+                      Enter your {quizParams.inputType}
+                    </label>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="input-group mb-3">
+                      <input
+                        capture="environment"
+                        name="inputValue"
+                        accept=".jpg,.png"
+                        type="file"
+                        onChange={(event) => handleInputChange(event)}
+                        className="form-control"
+                        id="inputGroupFile02"
+                        multiple
+                        required
+                      />
+                    </div>
+                    <div className="mb-3 d-flex flex-wrap">
+                      {quizParams.inputType === "images" &&
+                        quizParams.inputValue.map((imageUrl, index) => (
+                          <img
+                            className="img-fluid me-1 mb-1"
+                            style={{ height: "10rem" }}
+                            src={imageUrl}
+                            key={index}
+                            alt={`input ${index + 1}`}
+                          />
+                        ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Question type selection dropdown menu  */}
                 <div className="mb-3">

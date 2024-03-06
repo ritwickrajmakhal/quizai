@@ -122,6 +122,7 @@ function App() {
                     setPreLoader={setPreLoader}
                     userId={userData.id}
                     setModal={setModal}
+                    setAlert={setAlert}
                   />
                 )
               ) : (
