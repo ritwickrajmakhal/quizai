@@ -18,9 +18,12 @@ export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
   });
 
   return (
-    <div
-      className="card text-bg-primary me-3 mb-3 shadow-lg"
-      style={{ maxWidth: "18rem", cursor: "pointer" }}
+    <li
+      className="list-group-item list-group-item-action d-flex align-items-center justify-content-between text-light border border-0 border-bottom"
+      style={{
+        cursor: "pointer",
+        backgroundColor: "transparent",
+      }}
       data-bs-toggle={setModal ? "modal" : ""}
       data-bs-target={setModal ? "#exampleModal" : ""}
       onClick={() => {
@@ -35,7 +38,7 @@ export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
               />
             ),
             footer: (
-              <div className="modal-footer d-flex justify-content-center">
+              <div className="modal-footer d-flex justify-content-center text-bg-light">
                 <OverlayTrigger
                   placement={"top"}
                   overlay={
@@ -161,23 +164,13 @@ export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
         }
       }}
     >
-      <h5 className="card-header">
-        <strong>Topic: </strong>
-        {quiz.topic}
-      </h5>
-      <div className="card-body">
-        <div className="card-text">
-          <strong>Difficulty level: </strong>
-          {quiz.difficultyLevel}
-        </div>
-        <p className="card-text">
-          <strong>Type: </strong>
-          {quiz.questionsType}
-        </p>
+      <div>
+        <h5>{quiz.topic}</h5>
+        {quiz.difficultyLevel.toUpperCase() + " "}
+        <i className="fa-solid fa-circle"></i>
+        {" " + quiz.questionsType}
       </div>
-      <div className="card-footer">
-        <strong>Created At:</strong> {quiz.createdAt}
-      </div>
-    </div>
+      {quiz.createdAt}
+    </li>
   );
 }
