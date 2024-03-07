@@ -20,7 +20,7 @@ export default function Modal({ modal, setModal }) {
       >
         <div className="modal-content">
           <div className="modal-header">
-            <h1 className="modal-title fs-5" id="exampleModalLabel">
+            <h1 className="modal-title fs-5 text-light" id="exampleModalLabel">
               {modal.title}
             </h1>
             <OverlayTrigger
@@ -36,13 +36,13 @@ export default function Modal({ modal, setModal }) {
                 onClick={() =>
                   setModal({ title: null, body: null, footer: null })
                 }
-                className="btn btn-close btn-outline-danger"
+                className="btn btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
               ></button>
             </OverlayTrigger>
           </div>
-          <div className="modal-body">{modal.body}</div>
+          <div className="modal-body text-light">{modal.body}</div>
           {modal.footer}
         </div>
       </div>

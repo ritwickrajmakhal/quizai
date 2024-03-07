@@ -47,22 +47,31 @@ export default function Share({ url }) {
   return (
     <div>
       <div className="mb-3 d-flex justify-content-center">
-        <QRCode style={{ border: '1px solid black', padding: '2px' }} value={url} />
+        <QRCode
+          style={{ border: "1px solid white", padding: "2px" }}
+          value={url}
+        />
       </div>
       <div className="d-flex justify-content-center">
-        {["whatsapp", "facebook", "twitter", "linkedin"].map((platform, index) => (
-          <OverlayTrigger
-            key={index}
-            placement={"top"}
-            overlay={
-              <Tooltip id={`tooltip-top`}>
-                <strong>Share on {platform}</strong>
-              </Tooltip>
-            }
-          >
-            <i onClick={() => shareOnSocialMedia(platform)} className={`fab fa-${platform} fs-1 text-dark btn mb-3`}></i>
-          </OverlayTrigger>))
-        }
+        {["whatsapp", "facebook", "twitter", "linkedin"].map(
+          (platform, index) => (
+            <OverlayTrigger
+              key={index}
+              placement={"top"}
+              overlay={
+                <Tooltip id={`tooltip-top`}>
+                  <strong>Share on {platform}</strong>
+                </Tooltip>
+              }
+            >
+              <i
+                onClick={() => shareOnSocialMedia(platform)}
+                className={`fab fa-${platform} fs-1 text-light mx-3 mb-3`}
+                style={{ cursor: "pointer" }}
+              ></i>
+            </OverlayTrigger>
+          )
+        )}
       </div>
       <div className="input-group mb-3">
         <input
@@ -91,7 +100,11 @@ export default function Share({ url }) {
               setCopied(true);
             }}
           >
-            {copied ? <i className="fas fa-check"></i> : <i className="far fa-clone"></i>}
+            {copied ? (
+              <i className="fas fa-check"></i>
+            ) : (
+              <i className="far fa-clone"></i>
+            )}
           </button>
         </OverlayTrigger>
       </div>

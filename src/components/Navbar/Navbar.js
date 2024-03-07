@@ -21,7 +21,14 @@ export default function Navbar({ profile, user, setUser }) {
         </Link>
         {profile && user && (
           <div>
-            <Link className="btn btn-outline-light" to="/user/create">
+            <Link
+              className="btn btn-outline-light"
+              style={{
+                border: "1px solid #0bf4f3",
+                boxShadow: "0 0 5px #0bf4f3, 0 0 5px #0bf4f3 inset",
+              }}
+              to="/user/create"
+            >
               Create Quiz
             </Link>
             <img
