@@ -11,6 +11,7 @@ import request from "./func/request";
 import PreLoader from "./components/PreLoader/PreLoader";
 import Attempt from "./components/Attempt";
 import Alert from "./components/Alert";
+import Leaderboard from "./components/Leaderboard/Leaderboard";
 
 function App() {
   const [modal, setModal] = useState({ title: null, body: null });
@@ -147,6 +148,7 @@ function App() {
               )
             }
           />
+          <Route exact path="/leaderboard" element={<Leaderboard />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>

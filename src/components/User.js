@@ -3,6 +3,7 @@ import QuizCard from "./QuizCard";
 import { Link } from "react-router-dom";
 import { encrypt } from "../func/encryptDecrypt";
 import request from "../func/request";
+import Pagination from "./Pagination";
 
 const formatDate = (inputDate) => {
   const date = new Date(inputDate);
@@ -158,39 +159,5 @@ export default function User({ userId, setModal, setAlert }) {
         </div>
       )}
     </div>
-  );
-}
-
-function Pagination({ totalPages, paginate, currentPage }) {
-  const hasNextPage = currentPage < totalPages;
-  const hasPreviousPage = currentPage > 1;
-
-  const goToNextPage = () => {
-    if (hasNextPage) {
-      paginate(currentPage + 1);
-    }
-  };
-
-  const goToPreviousPage = () => {
-    if (hasPreviousPage) {
-      paginate(currentPage - 1);
-    }
-  };
-
-  return (
-    <nav>
-      <ul className="pagination justify-content-center">
-        <li className={`page-item ${hasPreviousPage ? "" : "disabled"}`}>
-          <button className="page-link" onClick={goToPreviousPage}>
-            &laquo; Previous
-          </button>
-        </li>
-        <li className={`page-item ${hasNextPage ? "" : "disabled"}`}>
-          <button className="page-link" onClick={goToNextPage}>
-            Next &raquo;
-          </button>
-        </li>
-      </ul>
-    </nav>
   );
 }
