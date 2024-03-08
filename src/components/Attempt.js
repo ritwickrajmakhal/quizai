@@ -1,9 +1,10 @@
 import { useEffect, useId, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { decrypt } from "../func/encryptDecrypt";
+import { decrypt } from "../func/encryptDecrypt.js";
 import request from "../func/request.js";
-import Slider from "./Slider";
-import CountdownTimer from "./CountdownTImer/CountdownTimer";
+import Slider from "./Slider/Slider.js";
+import CountdownTimer from "./CountdownTImer/CountdownTimer.js";
+import GlowText from "./GlowText/GlowText";
 
 export default function Attempt({ userId, setPreLoader, setAlert }) {
   // Get quiz id from the url
@@ -28,7 +29,28 @@ export default function Attempt({ userId, setPreLoader, setAlert }) {
         `/api/quizzes?populate=*&filters[id][$eq]=${decryptedQuizId}`,
         "GET"
       )
-        .then((res) => setQuiz(res.data[0]))
+        .then((res) => {
+          const quiz = res.data[0];
+          setQuiz(quiz);
+          // Calculate duration of the quiz
+          if (
+            quiz?.attributes.questionsType === "MCQ" ||
+            quiz?.attributes.questionsType === "MSQ"
+          ) {
+            setDuration(quiz.attributes.questions.length);
+          } else {
+            let time = 0;
+            quiz?.attributes.questions.forEach((question) => {
+              time += question.time;
+            });
+            setDuration(time);
+          }
+          // Add ans attribute to each question
+          quiz?.attributes.questions.forEach((question) => {
+            question["ans"] = "";
+          });
+          setQuestions(quiz?.attributes.questions);
+        })
         .finally(() => setPreLoader(null));
     }
   }, [qid, setPreLoader]);
@@ -52,39 +74,6 @@ export default function Attempt({ userId, setPreLoader, setAlert }) {
         .finally(() => setPreLoader(null));
     }
   }, [quiz, userId, attempted, setPreLoader]);
-
-  /* Fetch questions if attempt not found
-   * Calculate duration of the quiz
-   * Add ans attribute to each question
-   */
-  useEffect(() => {
-    if (!attempted && userId && quiz) {
-      // Fetch questions if attempt not found
-      request(`/api/questions?filters[quiz][id][$eq]=${quiz.id}`, "GET").then(
-        (res) => {
-          const questions = res.data[0].attributes.questions;
-          // Calculate duration of the quiz
-          if (
-            quiz.attributes.questionsType === "MCQ" ||
-            quiz.attributes.questionsType === "MSQ"
-          ) {
-            setDuration(questions.length);
-          } else {
-            let time = 0;
-            questions.forEach((question) => {
-              time += question.time;
-            });
-            setDuration(time);
-          }
-          // Add ans attribute to each question
-          questions.forEach((question) => {
-            question["ans"] = "";
-          });
-          setQuestions(questions);
-        }
-      );
-    }
-  }, [attempted, userId, quiz]);
 
   const handleCountdownComplete = () => {
     // stop countdown timer
@@ -165,6 +154,7 @@ export default function Attempt({ userId, setPreLoader, setAlert }) {
           public: userId,
           quiz: quiz.id,
           answers: questions,
+          total_points: questions.reduce((acc, item) => acc + item.score, 0),
         },
       })
         .then((res) => {
@@ -201,39 +191,40 @@ export default function Attempt({ userId, setPreLoader, setAlert }) {
   ]);
 
   return (
-    <div
-      className="container d-flex justify-content-center"
-      data-bs-theme="dark"
-    >
+    <div className="d-flex justify-content-center" data-bs-theme="dark">
       {quiz ? (
-        <div>
+        <div className="container">
           {/* Ask for confirmation to attempt quiz */}
           {!confirmation && questions && (
             <div className="card my-5 fs-5">
               <div className="card-body row">
                 <div className="col-sm-5">
                   <div className="card-text mb-3">
-                    <strong>Topic: </strong>
-                    {quiz?.attributes.inputValue}
+                    <strong>Name: </strong>
+                    {quiz.attributes.name}
                   </div>
                   <div className="card-text mb-3">
                     <strong>Number of Questions: </strong>
-                    {questions?.length}
+                    {questions.length}
                   </div>
                   <div className="card-text mb-3">
                     <strong>Questions Type: </strong>
-                    {quiz?.attributes.questionsType}
+                    {quiz.attributes.questionsType}
                   </div>
                   <div className="card-text mb-3">
                     <strong>Difficulty Level: </strong>
-                    {quiz?.attributes.difficultyLevel.toUpperCase()}
+                    {quiz.attributes.difficultyLevel.toUpperCase()}
                   </div>
                   <div className="card-text mb-3">
                     <strong>Generated By: </strong>
-                    {quiz?.attributes.public.data.attributes.name}
+                    {quiz.attributes.public.data.attributes.name}
                   </div>
                 </div>
                 <div className="col-sm-7">
+                  <div className="card-text mb-3">
+                    <strong>Duration: </strong>
+                    {duration} min
+                  </div>
                   <p className="fw-bold">Rules:</p>
                   <ul>
                     <li>All questions are mandatory.</li>
@@ -281,9 +272,8 @@ export default function Attempt({ userId, setPreLoader, setAlert }) {
                   <div className="card-header pb-0 d-flex justify-content-between">
                     <div>
                       <p>
-                        <strong>Topic: </strong>
-                        {quiz.attributes.inputValue.slice(0, 10)}
-                        {quiz.attributes.inputValue.length > 10 ? "..." : ""}
+                        <strong>Name: </strong>
+                        {quiz.attributes.name}
                       </p>
                       <p>
                         <strong>Number of questions: </strong>
@@ -338,7 +328,7 @@ export default function Attempt({ userId, setPreLoader, setAlert }) {
           )}
         </div>
       ) : (
-        <div>No quiz found</div>
+        <GlowText code={404} msg={"Quiz not found"} />
       )}
     </div>
   );

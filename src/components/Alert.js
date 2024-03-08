@@ -4,7 +4,7 @@ export default function Alert({ alert, setAlert }) {
   return (
     alert && (
       <div
-        className={`alert alert-${alert.type} alert-dismissible fade show`}
+        className={`container alert alert-${alert.type} alert-dismissible fade show`}
         role="alert"
       >
         {alert.message}

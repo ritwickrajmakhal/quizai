@@ -9,10 +9,11 @@
   }
 }
 
-.App {
+body {
   height: 100vh;
   background: url("bg.png");
   background-repeat: no-repeat;
+  background-attachment: fixed;
   background-size: cover; /* Initial size */
   animation: backgroundScroll 20s linear infinite alternate; /* Adjust timing as needed */
 }

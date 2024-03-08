@@ -1,126 +1,43 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import "./style.css";
-import Pagination from "../Pagination";
-
-const PAGE_SIZE = 10; // Number of QuizCards to show per page
+import request from "../../func/request";
+import { decrypt } from "../../func/encryptDecrypt";
+import GlowText from "../GlowText/GlowText";
 
 export default function Leaderboard() {
-  // Example data, replace with your actual leaderboard data
-  const [dados, setDados] = useState([
-    {
-      name: "Laura",
-      image: "https://cdn-icons-png.flaticon.com/512/186/186037.png",
-      marks: 100,
-      accuracy: 6,
-      time_taken: 70,
-    },
-    {
-      name: "John",
-      image: "https://cdn-icons-png.flaticon.com/512/186/186037.png",
-      marks: 90,
-      accuracy: 5,
-      time_taken: 80,
-    },
-    {
-      name: "Laura",
-      image: "https://cdn-icons-png.flaticon.com/512/186/186037.png",
-      marks: 100,
-      accuracy: 6,
-      time_taken: 70,
-    },
-    {
-      name: "John",
-      image: "https://cdn-icons-png.flaticon.com/512/186/186037.png",
-      marks: 90,
-      accuracy: 5,
-      time_taken: 80,
-    },
-    {
-      name: "John",
-      image: "https://cdn-icons-png.flaticon.com/512/186/186037.png",
-      marks: 90,
-      accuracy: 5,
-      time_taken: 80,
-    },
-    {
-      name: "Laura",
-      image: "https://cdn-icons-png.flaticon.com/512/186/186037.png",
-      marks: 100,
-      accuracy: 6,
-      time_taken: 70,
-    },
-    {
-      name: "John",
-      image: "https://cdn-icons-png.flaticon.com/512/186/186037.png",
-      marks: 90,
-      accuracy: 5,
-      time_taken: 80,
-    },
-    {
-      name: "Emma",
-      image: "https://cdn-icons-png.flaticon.com/512/186/186037.png",
-      marks: 95,
-      accuracy: 7,
-      time_taken: 60,
-    },
-    {
-      name: "Michael",
-      image: "https://cdn-icons-png.flaticon.com/512/186/186037.png",
-      marks: 85,
-      accuracy: 4,
-      time_taken: 90,
-    },
-    {
-      name: "Sophia",
-      image: "https://cdn-icons-png.flaticon.com/512/186/186037.png",
-      marks: 80,
-      accuracy: 3,
-      time_taken: 100,
-    },
-    {
-      name: "William",
-      image: "https://cdn-icons-png.flaticon.com/512/186/186037.png",
-      marks: 75,
-      accuracy: 2,
-      time_taken: 110,
-    },
-    {
-      name: "Olivia",
-      image: "https://cdn-icons-png.flaticon.com/512/186/186037.png",
-      marks: 70,
-      accuracy: 1,
-      time_taken: 120,
-    },
-    {
-      name: "Daniel",
-      image: "https://cdn-icons-png.flaticon.com/512/186/186037.png",
-      marks: 65,
-      accuracy: 0,
-      time_taken: 130,
-    },
-  ]);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const qid = queryParams.get("qid");
 
-  // State for tracking current page
-  const [currentPage, setCurrentPage] = useState(1);
+  const [players, setPlayers] = useState(null);
+  useEffect(() => {
+    if (qid) {
+      const decryptedQuizId = decrypt(qid);
+      request(
+        `/api/attempts?filters[quiz][id][$eq]=${decryptedQuizId}&populate[public][fields][0]=name&populate[public][fields][1]=picture&populate[attempts][fields][1]=total_points&sort[0]=total_points:desc`
+      ).then((res) => {
+        setPlayers(
+          res.data.map((item) => ({
+            total_points: item.attributes.total_points,
+            image: item.attributes.public.data.attributes.picture,
+            name: item.attributes.public.data.attributes.name,
+          }))
+        );
+      });
+    }
+  }, [qid]);
 
-  // Logic to calculate the start and end index of data to display for the current page
-  const indexOfLastItem = currentPage * PAGE_SIZE;
-  const indexOfFirstItem = indexOfLastItem - PAGE_SIZE;
-  const currentItems = dados.slice(indexOfFirstItem, indexOfLastItem);
-
-  // Handler function to change current page
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
   return (
     <div className="container">
-      {dados.length === 0 && <p className="text-light">No data found</p>}
+      {players?.length === 0 && (
+        <GlowText code={"Wait"} msg={"No user attempted"} />
+      )}
       <div className="topLeadersList">
-        {dados.map(
+        {players?.map(
           (leader, index) =>
             index + 1 <= 3 && (
               <div className="leader" key={index}>
-                (
                 <div className="containerImage">
                   <img className="image" loading="lazy" src={leader.image} />
                   <div className="crown">
@@ -137,14 +54,13 @@ export default function Leaderboard() {
                       />
                     </svg>
                   </div>
-                  <div className="leaderName">{leader.name}</div>
+                  <div className="leaderName">{leader.name.split(" ")[0]}</div>
                 </div>
-                )
               </div>
             )
         )}
       </div>
-      {dados.length !== 0 && (
+      {players?.length !== 0 && (
         <div>
           <table
             className="table table-dark table-hover"
@@ -155,13 +71,11 @@ export default function Leaderboard() {
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Marks</th>
-                <th scope="col">Accuracy</th>
-                <th scope="col">Time taken</th>
               </tr>
             </thead>
             <tbody>
-              {/* Map over currentItems instead of the entire dados array */}
-              {currentItems.map((player, index) => (
+              {/* Map over all items without pagination */}
+              {players?.map((player, index) => (
                 <tr key={index}>
                   <th scope="row">{index + 1}</th>
                   <td>
@@ -170,22 +84,13 @@ export default function Leaderboard() {
                       src={player.image}
                       style={{ height: "2rem" }}
                     />
-                    <span className="ms-2">{player.name}</span>
+                    <span className="ms-2">{player.name.split(" ")[0]}</span>
                   </td>
-                  <td>{player.marks}</td>
-                  <td>{player.accuracy}</td>
-                  <td>{player.time_taken}</td>
+                  <td>{player.total_points}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-
-          {/* Render Pagination component */}
-          <Pagination
-            totalPages={Math.ceil(dados.length / PAGE_SIZE)}
-            paginate={paginate}
-            currentPage={currentPage}
-          />
         </div>
       )}
     </div>

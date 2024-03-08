@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import Slider from "./Slider";
+import Slider from "./Slider/Slider";
 import request from "../func/request";
 import Share from "./Share";
 import { encrypt } from "../func/encryptDecrypt";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 const convertBlobToBase64 = (blob) => {
   return new Promise((resolve, reject) => {
@@ -20,6 +22,7 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
   // States to store quiz parameters
   const [quizParams, setQuizParams] = useState({
     inputType: "topic",
+    name: "untitled quiz",
     inputValue: [],
     questionsType: "MCQ",
     difficultyLevel: "easy",
@@ -29,7 +32,6 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
 
   const handleInputChange = (event) => {
     const { name, files, value } = event.target;
-
     if (quizParams.inputType === "images" && files) {
       const maxSize = 4 * 1024 * 1024; // 4 MB limit
       const selectedFiles = Array.from(files);
@@ -184,12 +186,12 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
     if (!quizId) {
       setPreLoader("Saving...");
       request("/api/quizzes", "POST", {
-        data: quizParams,
+        data: {
+          ...quizParams,
+          questions: questions,
+        },
       })
         .then((res) => {
-          request("/api/questions", "POST", {
-            data: { questions: questions, quiz: res.data.id },
-          });
           const encryptedQuizId = encrypt(res.data.id);
           setQuizId(encryptedQuizId);
           setModal({
@@ -226,26 +228,54 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
   };
 
   return (
-    <div data-bs-theme="dark">
+    <div className="container" data-bs-theme="dark">
       {questions && (
-        <div className="d-flex justify-content-around mt-3">
-          <button
-            onClick={() => {
-              setQuestions(null);
-              setQuizId(null);
+        <div className="input-group mt-3">
+          <input
+            value={quizParams.name}
+            onChange={(event) => {
+              handleInputChange(event);
             }}
-            className="btn btn-danger"
+            name="name"
+            type="text"
+            className="form-control"
+            placeholder="Quiz name"
+          />
+          <OverlayTrigger
+            placement={"top"}
+            overlay={
+              <Tooltip id={`tooltip-top`}>
+                <strong>Regenerate</strong>
+              </Tooltip>
+            }
           >
-            Regenerate <i className="fa-solid fa-arrow-rotate-right"></i>
-          </button>
-          <button
-            onClick={() => shareQuiz()}
-            className="btn btn-success"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
+            <button
+              onClick={() => {
+                setQuestions(null);
+                setQuizId(null);
+              }}
+              className="btn btn-danger"
+            >
+              <i className="fa-solid fa-arrow-rotate-right"></i>
+            </button>
+          </OverlayTrigger>
+          <OverlayTrigger
+            placement={"top"}
+            overlay={
+              <Tooltip id={`tooltip-top`}>
+                <strong>Share</strong>
+              </Tooltip>
+            }
           >
-            Share <i className="fa-solid fa-arrow-up-from-bracket"></i>
-          </button>
+            <button
+              onClick={() => shareQuiz()}
+              className="btn btn-success"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+            >
+              <i className="fa-solid fa-arrow-up-from-bracket"></i>
+            </button>
+          </OverlayTrigger>
         </div>
       )}
       <div className="d-flex justify-content-center">
@@ -255,11 +285,12 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
             questionsType={quizParams.questionsType}
             questions={questions}
             setQuestions={setQuestions}
+            setAlert={setAlert}
           />
         ) : (
           <div className="create card border mt-5" style={{ minWidth: "50%" }}>
             <div className="card-body">
-              <h5 className="card-title">Create a new quiz</h5>
+              <h4 className="card-title fw-bold mb-3">Create a new quiz:</h4>
               <form onSubmit={(event) => handleSubmit(event)}>
                 {/* Input type: Topic or Text */}
                 <div className="mb-3">
@@ -382,7 +413,10 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
                 </div>
 
                 {/* Submit button */}
-                <button type="submit" className="btn btn-primary">
+                <button
+                  type="submit"
+                  className="btn btn-md btn-outline-secondary w-100"
+                >
                   Generate questions
                 </button>
               </form>

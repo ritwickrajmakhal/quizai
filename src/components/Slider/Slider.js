@@ -2,7 +2,6 @@ import React from "react";
 import { useState, useEffect } from "react";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import Alert from "./Alert";
 
 export default function Slider({
   header,
@@ -12,6 +11,7 @@ export default function Slider({
   questionsType,
   questions,
   setQuestions,
+  setAlert,
 }) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const goToNext = () => {
@@ -26,14 +26,6 @@ export default function Slider({
       setQuestionIndex(questionIndex - 1);
     }
   };
-  const [alert, setAlert] = useState(); // State to store alert message {message:"", type:""}
-  useEffect(() => {
-    if (alert) {
-      setTimeout(() => {
-        setAlert(null);
-      }, 3000);
-    }
-  }, [alert]);
 
   const deleteQuestion = () => {
     // delete question
@@ -65,8 +57,7 @@ export default function Slider({
 
   return (
     <div className="container my-4">
-      <Alert alert={alert} setAlert={setAlert} />
-      <div className="card" style={{ minWidth: "70%" }}>
+      <div className="card slider" style={{ minWidth: "70%" }}>
         {header}
         <div className="card-body">
           {/* Question statement area */}

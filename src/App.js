@@ -49,6 +49,7 @@ function App() {
             data: {
               userId: res.data.id,
               name: res.data.name,
+              picture: res.data.picture,
             },
           }).catch((err) => {});
           setProfile(res.data);
@@ -76,6 +77,18 @@ function App() {
     }
   }, [profile]);
 
+  // right click disabled
+  // useEffect(() => {
+  //   const disableRightClick = (e) => {
+  //     e.preventDefault();
+  //   };
+
+  //   window.addEventListener("contextmenu", disableRightClick);
+
+  //   return () => {
+  //     window.removeEventListener("contextmenu", disableRightClick);
+  //   };
+  // }, []);
   return (
     <div className="App">
       {preLoader && <PreLoader msg={preLoader} />}

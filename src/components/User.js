@@ -3,7 +3,6 @@ import QuizCard from "./QuizCard";
 import { Link } from "react-router-dom";
 import { encrypt } from "../func/encryptDecrypt";
 import request from "../func/request";
-import Pagination from "./Pagination";
 
 const formatDate = (inputDate) => {
   const date = new Date(inputDate);
@@ -12,15 +11,11 @@ const formatDate = (inputDate) => {
     .padStart(2, "0")}/${date.getFullYear()}`;
 };
 
-const PAGE_SIZE = 8; // Number of QuizCards to show per page
-
 export default function User({ userId, setModal, setAlert }) {
   const [createdQuizzes, setCreatedQuizzes] = useState([]);
   const [attemptedQuizzes, setAttemptedQuizzes] = useState([]);
   const [modified, setModified] = useState(false);
   const [activeTab, setActiveTab] = useState("created");
-  const [currentPageCreated, setCurrentPageCreated] = useState(1);
-  const [currentPageAttempted, setCurrentPageAttempted] = useState(1);
 
   useEffect(() => {
     request(`/api/quizzes?filters[public][id][$eq]=${userId}`, "GET").then(
@@ -34,9 +29,6 @@ export default function User({ userId, setModal, setAlert }) {
       }
     );
   }, [userId, modified]);
-
-  const paginateCreated = (pageNumber) => setCurrentPageCreated(pageNumber);
-  const paginateAttempted = (pageNumber) => setCurrentPageAttempted(pageNumber);
 
   return (
     <div className="container">
@@ -73,21 +65,18 @@ export default function User({ userId, setModal, setAlert }) {
       {activeTab === "created" && (
         <div>
           <ul className="list-group list-group-flush mb-3">
-            {createdQuizzes
-              .slice(
-                (currentPageCreated - 1) * PAGE_SIZE,
-                currentPageCreated * PAGE_SIZE
-              )
-              .map((quiz) => {
+            {createdQuizzes.length === 0 ? (
+              <p className="text-light">No data found</p>
+            ) : (
+              createdQuizzes.map((quiz) => {
                 const quizAttributes = quiz.attributes;
                 return (
                   <QuizCard
                     key={quiz.id}
                     quiz={{
                       id: quiz.id,
-                      topic: `${quizAttributes.inputValue.slice(0, 20)}${
-                        quizAttributes.inputValue.length > 20 ? "..." : ""
-                      }`,
+                      name: quizAttributes.name,
+                      questions: quizAttributes.questions,
                       difficultyLevel: quizAttributes.difficultyLevel,
                       createdAt: formatDate(quizAttributes.publishedAt),
                       questionsType: quizAttributes.questionsType,
@@ -97,13 +86,9 @@ export default function User({ userId, setModal, setAlert }) {
                     setAlert={setAlert}
                   />
                 );
-              })}
+              })
+            )}
           </ul>
-          <Pagination
-            totalPages={Math.ceil(createdQuizzes.length / PAGE_SIZE)}
-            paginate={paginateCreated}
-            currentPage={currentPageCreated}
-          />
         </div>
       )}
       {activeTab === "attempted" && (
@@ -112,50 +97,32 @@ export default function User({ userId, setModal, setAlert }) {
             {attemptedQuizzes.length === 0 ? (
               <p className="text-light">No data found</p>
             ) : (
-              attemptedQuizzes
-                .slice(
-                  (currentPageAttempted - 1) * PAGE_SIZE,
-                  currentPageAttempted * PAGE_SIZE
-                )
-                .map((quiz) => {
-                  const quizAttributes = quiz.attributes.quiz.data;
-                  return (
-                    <Link
-                      key={quizAttributes.id}
-                      className="text-decoration-none"
-                      to={`/attempt?qid=${encodeURIComponent(
-                        encrypt(quizAttributes.id)
-                      )}`}
-                    >
-                      <QuizCard
-                        key={quiz.id}
-                        quiz={{
-                          id: quiz.id,
-                          topic: `${quizAttributes.attributes.inputValue.slice(
-                            0,
-                            20
-                          )}${
-                            quizAttributes.attributes.inputValue.length > 20
-                              ? "..."
-                              : ""
-                          }`,
-                          difficultyLevel:
-                            quizAttributes.attributes.difficultyLevel.toUpperCase(),
-                          createdAt: formatDate(quiz.attributes.publishedAt),
-                          questionsType:
-                            quizAttributes.attributes.questionsType,
-                        }}
-                      />
-                    </Link>
-                  );
-                })
+              attemptedQuizzes.map((quiz) => {
+                const quizAttributes = quiz.attributes.quiz.data;
+                return (
+                  <Link
+                    key={quizAttributes.id}
+                    className="text-decoration-none"
+                    to={`/attempt?qid=${encodeURIComponent(
+                      encrypt(quizAttributes.id)
+                    )}`}
+                  >
+                    <QuizCard
+                      key={quiz.id}
+                      quiz={{
+                        id: quiz.id,
+                        name: quizAttributes.attributes.name,
+                        difficultyLevel:
+                          quizAttributes.attributes.difficultyLevel.toUpperCase(),
+                        createdAt: formatDate(quiz.attributes.publishedAt),
+                        questionsType: quizAttributes.attributes.questionsType,
+                      }}
+                    />
+                  </Link>
+                );
+              })
             )}
           </ul>
-          <Pagination
-            totalPages={Math.ceil(attemptedQuizzes.length / PAGE_SIZE)}
-            paginate={paginateAttempted}
-            currentPage={currentPageAttempted}
-          />
         </div>
       )}
     </div>
