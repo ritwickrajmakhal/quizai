@@ -57,15 +57,18 @@ export default function Slider({
 
   return (
     <div className="container my-4">
-      <div className="card slider" style={{ minWidth: "70%" }}>
+      <div
+        className="card slider"
+        style={{ minWidth: "70%", position: "relative" }}
+      >
         {header}
-        <div className="card-body">
+        <div className="card-body z-0">
           {/* Watermark */}
           <img
             alt="watermark"
             src={logo}
-            style={{ opacity: 0.15}}
-            className="img-fluid position-absolute top-50 start-50 translate-middle"
+            style={{ opacity: 0.15, background: "transparent" }}
+            className="img-fluid position-absolute top-50 start-50 translate-middle z-n1"
           />
           {/* Question statement area */}
           {editable ? (
