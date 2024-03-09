@@ -1,12 +1,12 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Home from "./components/Home/Home";
+import Home from "./components/Home";
 import { useState, useEffect } from "react";
 import Model from "./components/Modal";
 import axios from "axios";
 import User from "./components/User";
 import Create from "./components/Create";
-import Navbar from "./components/Navbar/Navbar";
+import Navbar from "./components/Navbar";
 import request from "./func/request";
 import PreLoader from "./components/PreLoader/PreLoader";
 import Attempt from "./components/Attempt";
@@ -69,7 +69,7 @@ function App() {
       setPreLoader("Gathering quizzes data...");
       request(`/api/publics?filters[userId][$eq]=${profile.id}`, "GET")
         .then((res) => {
-          setUserData(res.data[0]);
+          setUserData(res?.data[0]);
         })
         .finally(() => {
           setPreLoader(null);
@@ -91,7 +91,7 @@ function App() {
   // }, []);
   return (
     <div className="App">
-      {preLoader && <PreLoader msg={preLoader} />}
+      <PreLoader msg={preLoader} />
       <Model modal={modal} setModal={setModal} />
       <BrowserRouter>
         <Navbar profile={profile} user={user} setUser={setUser} />
