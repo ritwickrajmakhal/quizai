@@ -5,7 +5,7 @@ import request from "../../func/request";
 import { decrypt } from "../../func/encryptDecrypt";
 import GlowText from "../GlowText/GlowText";
 
-export default function Leaderboard() {
+export default function Leaderboard({ setPreloader }) {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const qid = queryParams.get("qid");
@@ -13,18 +13,21 @@ export default function Leaderboard() {
   const [players, setPlayers] = useState(null);
   useEffect(() => {
     if (qid) {
+      setPreloader("Fetching players...");
       const decryptedQuizId = decrypt(qid);
       request(
         `/api/attempts?filters[quiz][id][$eq]=${decryptedQuizId}&populate[public][fields][0]=name&populate[public][fields][1]=picture&populate[attempts][fields][1]=total_points&sort[0]=total_points:desc`
-      ).then((res) => {
-        setPlayers(
-          res.data.map((item) => ({
-            total_points: item.attributes.total_points,
-            image: item.attributes.public.data.attributes.picture,
-            name: item.attributes.public.data.attributes.name,
-          }))
-        );
-      });
+      )
+        .then((res) => {
+          setPlayers(
+            res.data.map((item) => ({
+              total_points: item.attributes.total_points,
+              image: item.attributes.public.data.attributes.picture,
+              name: item.attributes.public.data.attributes.name,
+            }))
+          );
+        })
+        .finally(() => setPreloader(null));
     }
   }, [qid]);
 

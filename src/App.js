@@ -78,17 +78,17 @@ function App() {
   }, [profile]);
 
   // right click disabled
-  // useEffect(() => {
-  //   const disableRightClick = (e) => {
-  //     e.preventDefault();
-  //   };
+  useEffect(() => {
+    const disableRightClick = (e) => {
+      e.preventDefault();
+    };
 
-  //   window.addEventListener("contextmenu", disableRightClick);
+    window.addEventListener("contextmenu", disableRightClick);
 
-  //   return () => {
-  //     window.removeEventListener("contextmenu", disableRightClick);
-  //   };
-  // }, []);
+    return () => {
+      window.removeEventListener("contextmenu", disableRightClick);
+    };
+  }, []);
   return (
     <div className="App">
       <PreLoader msg={preLoader} />
@@ -161,7 +161,11 @@ function App() {
               )
             }
           />
-          <Route exact path="/leaderboard" element={<Leaderboard />} />
+          <Route
+            exact
+            path="/leaderboard"
+            element={<Leaderboard setPreloader={setPreLoader} />}
+          />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>
