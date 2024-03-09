@@ -1,10 +1,11 @@
-import Slider from "./Slider";
+import Slider from "../Slider";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import request from "../func/request";
-import Share from "./Share";
-import { encrypt } from "../func/encryptDecrypt";
+import request from "../../func/request";
+import Share from "../Share";
+import { encrypt } from "../../func/encryptDecrypt";
 import { Link } from "react-router-dom";
+import "./style.css";
 
 export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
   return (

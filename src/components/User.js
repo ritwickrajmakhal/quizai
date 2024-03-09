@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import QuizCard from "./QuizCard";
+import QuizCard from "./QuizCard/QuizCard";
 import { Link } from "react-router-dom";
 import { encrypt } from "../func/encryptDecrypt";
 import request from "../func/request";
@@ -31,7 +31,7 @@ export default function User({ userId, setModal, setAlert }) {
   }, [userId, modified]);
 
   return (
-    <div className="container">
+    <div className="container user">
       <h2
         className="text-light my-4"
         style={{

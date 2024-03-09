@@ -123,13 +123,15 @@ export default function Attempt({ userId, setPreLoader, setAlert }) {
                 return res.json();
               })
               .then((res) => {
-                console.log(res[0]);
-                question.score =
-                  res[0] >= 0.9 && questionsType === "NAT" ? 1 : 0;
-                question.score =
-                  res[0] >= 0.8 && questionsType === "SAQ" ? 1 : 0;
-                question.score =
-                  res[0] >= 0.5 && questionsType === "LAQ" ? 1 : 0;
+                if (res[0] >= 0.9 && questionsType === "NAT") {
+                  question.score = 1;
+                } else if (res[0] >= 0.8 && questionsType === "SAQ") {
+                  question.score = 1;
+                } else if (res[0] >= 0.5 && questionsType === "LAQ") {
+                  question.score = 1;
+                } else {
+                  question.score = 0;
+                }
               });
 
             fetchPromises.push(fetchPromise); // Push the fetch promise to the array

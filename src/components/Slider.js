@@ -64,7 +64,8 @@ export default function Slider({
           <img
             alt="watermark"
             src={logo}
-            className="img-fluid opacity-25 position-absolute top-50 start-50 translate-middle"
+            style={{ opacity: 0.15}}
+            className="img-fluid position-absolute top-50 start-50 translate-middle"
           />
           {/* Question statement area */}
           {editable ? (

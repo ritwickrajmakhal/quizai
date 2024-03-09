@@ -29,7 +29,7 @@ export default function Leaderboard({ setPreloader }) {
         })
         .finally(() => setPreloader(null));
     }
-  }, [qid]);
+  }, [qid, setPreloader]);
 
   return (
     <div className="container">
