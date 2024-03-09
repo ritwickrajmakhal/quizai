@@ -5,6 +5,8 @@ import { useGoogleLogin } from "@react-oauth/google";
 import request from "../func/request";
 
 export default function Home(props) {
+  // set title of the web page
+  document.title = "Quiz AI - Login";
   // Getting data from website's backend api
   const [webSiteData, setWebSiteData] = useState();
   useEffect(() => {

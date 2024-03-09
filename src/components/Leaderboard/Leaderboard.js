@@ -6,6 +6,9 @@ import { decrypt } from "../../func/encryptDecrypt";
 import GlowText from "../GlowText/GlowText";
 
 export default function Leaderboard({ setPreloader }) {
+  // set title of the web page
+  document.title = "Quiz AI - Leaderboard";
+
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const qid = queryParams.get("qid");

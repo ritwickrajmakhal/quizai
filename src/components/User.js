@@ -12,6 +12,9 @@ const formatDate = (inputDate) => {
 };
 
 export default function User({ userId, setModal, setAlert }) {
+  // set title of the web page
+  document.title = "Quiz AI - Your quizzes";
+
   const [createdQuizzes, setCreatedQuizzes] = useState([]);
   const [attemptedQuizzes, setAttemptedQuizzes] = useState([]);
   const [modified, setModified] = useState(false);

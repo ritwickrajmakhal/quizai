@@ -7,6 +7,9 @@ import CountdownTimer from "./CountdownTImer/CountdownTimer.js";
 import GlowText from "./GlowText/GlowText";
 
 export default function Attempt({ userId, setPreLoader, setAlert }) {
+  // set title of the web page
+  document.title = "Quiz AI - Attempt quiz";
+
   // Get quiz id from the url
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);

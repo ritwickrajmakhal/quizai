@@ -77,18 +77,6 @@ function App() {
     }
   }, [profile]);
 
-  // right click disabled
-  useEffect(() => {
-    const disableRightClick = (e) => {
-      e.preventDefault();
-    };
-
-    window.addEventListener("contextmenu", disableRightClick);
-
-    return () => {
-      window.removeEventListener("contextmenu", disableRightClick);
-    };
-  }, []);
   return (
     <div className="App">
       <PreLoader msg={preLoader} />

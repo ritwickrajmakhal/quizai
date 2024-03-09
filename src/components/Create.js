@@ -19,6 +19,9 @@ const convertBlobToBase64 = (blob) => {
 };
 
 export default function Create({ setPreLoader, userId, setModal, setAlert }) {
+  // set title of the web page
+  document.title = "Quiz AI - Create";
+
   // States to store quiz parameters
   const [quizParams, setQuizParams] = useState({
     inputType: "topic",
