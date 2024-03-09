@@ -1,7 +1,7 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
+import logo from "./logo.png";
 
 export default function Slider({
   header,
@@ -60,6 +60,12 @@ export default function Slider({
       <div className="card slider" style={{ minWidth: "70%" }}>
         {header}
         <div className="card-body">
+          {/* Watermark */}
+          <img
+            alt="watermark"
+            src={logo}
+            className="opacity-25 position-absolute top-50 start-50 translate-middle"
+          />
           {/* Question statement area */}
           {editable ? (
             <div className="input-group input-group-lg mb-3">

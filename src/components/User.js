@@ -110,7 +110,7 @@ export default function User({ userId, setModal, setAlert }) {
                     <QuizCard
                       key={quiz.id}
                       quiz={{
-                        id: quiz.id,
+                        id: quizAttributes.id,
                         name: quizAttributes.attributes.name,
                         difficultyLevel:
                           quizAttributes.attributes.difficultyLevel.toUpperCase(),

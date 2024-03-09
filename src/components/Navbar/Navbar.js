@@ -1,14 +1,14 @@
 import { googleLogout } from "@react-oauth/google";
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "./logo.png";
+import logo from "../logo.png";
 
 export default function Navbar({ profile, user, setUser }) {
   return (
     <nav
       className="navbar border-body sticky-top"
       data-bs-theme="dark"
-      style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
+      style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
     >
       <div className="container py-2">
         <Link to="/user" className="navbar-brand">

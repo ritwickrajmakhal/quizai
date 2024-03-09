@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import Slider from "./Slider/Slider";
+import Slider from "./Slider";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import request from "../func/request";
@@ -10,9 +9,9 @@ import { Link } from "react-router-dom";
 export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
   return (
     <li
-      className="list-group-item list-group-item-action d-flex align-items-center justify-content-between text-light border border-0 border-bottom"
+      className="list-group-item list-group-item-action text-light border border-0 border-bottom rounded-4"
       style={{
-        backgroundColor: "transparent",
+        backgroundColor: "rgba(0,0,0,0.3)",
       }}
       onClick={() => {
         if (setModal) {
@@ -136,21 +135,21 @@ export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
         }
       }}
     >
-      <div
-        role="button"
-        data-bs-toggle={setModal ? "modal" : ""}
-        data-bs-target={setModal ? "#exampleModal" : ""}
-      >
-        <h5>{quiz.name}</h5>
-        {quiz.difficultyLevel.toUpperCase() + " "}
-        <i className="fa-solid fa-circle"></i>
-        {" " + quiz.questionsType}
-      </div>
-      <div>
-        <Link
-          to={`/leaderboard?qid=${encodeURIComponent(encrypt(quiz.id))}`}
-          className="text-decoration-none"
+      <div className="row">
+        <div
+          className="col-sm-10"
+          role="button"
+          data-bs-toggle={setModal ? "modal" : ""}
+          data-bs-target={setModal ? "#exampleModal" : ""}
         >
+          <h5>{quiz.name}</h5>
+          <div className="mb-2">
+            {quiz.difficultyLevel.toUpperCase() + " "}
+            <i className="fa-solid fa-circle"></i>
+            {" " + quiz.questionsType}
+          </div>
+        </div>
+        <div className="col-sm-2 my-auto">
           <OverlayTrigger
             placement={"top"}
             overlay={
@@ -159,10 +158,15 @@ export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
               </Tooltip>
             }
           >
-            <i className="fa-solid fa-chart-simple me-4"></i>
+            <Link
+              to={`/leaderboard?qid=${encodeURIComponent(encrypt(quiz.id))}`}
+              className="text-decoration-none text-light"
+            >
+              <i className="fa-solid fa-chart-simple me-3"></i>
+            </Link>
           </OverlayTrigger>
-        </Link>
-        <span>{quiz.createdAt}</span>
+          <span>{quiz.createdAt}</span>
+        </div>
       </div>
     </li>
   );

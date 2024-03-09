@@ -39,7 +39,12 @@ export default function Leaderboard() {
             index + 1 <= 3 && (
               <div className="leader" key={index}>
                 <div className="containerImage">
-                  <img className="image" loading="lazy" src={leader.image} />
+                  <img
+                    alt="leader"
+                    className="image"
+                    loading="lazy"
+                    src={leader.image}
+                  />
                   <div className="crown">
                     <svg
                       id="crown1"
@@ -80,6 +85,7 @@ export default function Leaderboard() {
                   <th scope="row">{index + 1}</th>
                   <td>
                     <img
+                      alt="player"
                       className="img-fluid rounded-circle border"
                       src={player.image}
                       style={{ height: "2rem" }}

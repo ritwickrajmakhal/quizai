@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import Slider from "./Slider/Slider";
+import Slider from "./Slider";
 import request from "../func/request";
 import Share from "./Share";
 import { encrypt } from "../func/encryptDecrypt";
@@ -62,10 +62,13 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
   // convert all images to Base 64
   const [images, setImages] = useState();
   useEffect(() => {
-    if (quizParams.inputType === "images" && quizParams.inputValue) {
+    if (
+      quizParams.inputType === "images" &&
+      Array.isArray(quizParams.inputValue)
+    ) {
       const fetchImages = async () => {
         const images = await Promise.all(
-          quizParams.inputValue?.map(async (imageUrl) => {
+          quizParams.inputValue.map(async (imageUrl) => {
             const response = await fetch(imageUrl);
             const blob = await response.blob();
             return convertBlobToBase64(blob);
@@ -233,9 +236,7 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
         <div className="input-group mt-3">
           <input
             value={quizParams.name}
-            onChange={(event) => {
-              handleInputChange(event);
-            }}
+            onChange={(event) => handleInputChange(event)}
             name="name"
             type="text"
             className="form-control"
@@ -292,7 +293,7 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
             <div className="card-body">
               <h4 className="card-title fw-bold mb-3">Create a new quiz:</h4>
               <form onSubmit={(event) => handleSubmit(event)}>
-                {/* Input type: Topic or Text */}
+                {/* Input type: Topic or Text or images */}
                 <div className="mb-3">
                   <select
                     className="form-select"
@@ -300,7 +301,10 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
                     aria-label="Default select example"
                     defaultValue={quizParams.inputType}
                     defaultChecked={quizParams.inputType}
-                    onChange={(event) => handleInputChange(event)}
+                    onChange={(event) => {
+                      handleInputChange(event);
+                      setQuizParams((prev) => ({ ...prev, inputValue: "" }));
+                    }}
                     required
                   >
                     <option value="topic">Topic</option>
@@ -343,6 +347,7 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
                     </div>
                     <div className="mb-3 d-flex flex-wrap">
                       {quizParams.inputType === "images" &&
+                        Array.isArray(quizParams.inputValue) &&
                         quizParams.inputValue.map((imageUrl, index) => (
                           <img
                             className="img-fluid me-1 mb-1"

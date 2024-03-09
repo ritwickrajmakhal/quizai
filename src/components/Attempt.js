@@ -2,7 +2,7 @@ import { useEffect, useId, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { decrypt } from "../func/encryptDecrypt.js";
 import request from "../func/request.js";
-import Slider from "./Slider/Slider.js";
+import Slider from "./Slider";
 import CountdownTimer from "./CountdownTImer/CountdownTimer.js";
 import GlowText from "./GlowText/GlowText";
 
