@@ -4,8 +4,10 @@ import loading from "./loading.gif";
 export default function PreLoader({ msg }) {
   return (
     <div
-      className={`preloader position-absolute z-3 vw-100 vh-100 d-${msg ? "block" : "none"}`}
-      style={{ backgroundColor: "rgba(0,0,0,1)" }}
+      className={`preloader position-absolute z-3 vw-100 vh-100 d-${
+        msg ? "block" : "none"
+      }`}
+      style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
     >
       <div className="d-flex justify-content-center align-items-center flex-column position-relative top-50">
         <img
