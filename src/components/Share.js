@@ -13,24 +13,32 @@ export default function Share({ url }) {
     switch (platform) {
       case "whatsapp":
         socialMediaURL = isMobileDevice()
-          ? `whatsapp://send?text=${message}${url}`
-          : `https://web.whatsapp.com/send?text=${message}${url}`;
+          ? `whatsapp://send?text=${encodeURIComponent(message + url)}`
+          : `https://web.whatsapp.com/send?text=${encodeURIComponent(
+              message + url
+            )}`;
         break;
       case "facebook":
-        socialMediaURL = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+        socialMediaURL = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+          url
+        )}`;
         break;
       case "twitter":
-        socialMediaURL = `https://twitter.com/intent/tweet?url=${url}&text=${message}`;
+        socialMediaURL = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+          url
+        )}&text=${message}`;
         break;
       case "linkedin":
-        socialMediaURL = `https://www.linkedin.com/shareArticle?url=${url}&title=${message}`;
+        socialMediaURL = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
+          url
+        )}&title=${encodeURIComponent(message)}`;
         break;
       default:
         socialMediaURL = "";
     }
 
     if (socialMediaURL) {
-      if (platform === "whatsapp") {
+      if (platform === "whatsapp" && isMobileDevice()) {
         window.location.href = socialMediaURL; // Directly open WhatsApp on mobile
       } else {
         window.open(socialMediaURL, "_blank"); // Open in a new tab

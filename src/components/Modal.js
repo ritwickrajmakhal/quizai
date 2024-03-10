@@ -20,7 +20,10 @@ export default function Modal({ modal, setModal }) {
       >
         <div className="modal-content">
           <div className="modal-header">
-            <h1 className="modal-title fs-5 text-light" id="exampleModalLabel">
+            <h1
+              className="modal-title fs-5 text-light w-100 d-inline-block text-truncate"
+              id="exampleModalLabel"
+            >
               {modal.title}
             </h1>
             <OverlayTrigger

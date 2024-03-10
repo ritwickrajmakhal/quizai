@@ -48,6 +48,6 @@ npm start
 
 - [React](https://reactjs.org/) - The web framework used
 - [Strapi](https://strapi.io/) - The headless CMS used
-- [Gemini](https://docs.gemini.com/rest-api/) - The cryptocurrency exchange API used
+- [Gemini](https://docs.gemini.com/rest-api/) - Generative AI
 - [Hugging Face](https://huggingface.co/) - The NLP API used
 - [Google](https://developers.google.com/identity/sign-in/web/sign-in) - The authentication API used

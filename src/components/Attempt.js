@@ -174,7 +174,6 @@ export default function Attempt({ userId, setPreLoader, setAlert }) {
           });
         })
         .catch((error) => {
-          setPreLoader(null);
           setAlert({
             message: (
               <>
@@ -183,7 +182,8 @@ export default function Attempt({ userId, setPreLoader, setAlert }) {
             ),
             type: "danger",
           });
-        });
+        })
+        .finally(() => setPreLoader(null));
     }
   }, [
     attemptEvaluated,

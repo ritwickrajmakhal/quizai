@@ -87,7 +87,7 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
   const [quizId, setQuizId] = useState(null);
 
   // Function to handle form submission
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     setPreLoader("Generating...");
     const prompt = require("../func/prompt");
@@ -182,9 +182,9 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
         ];
       }
     }
-    const response = await prompt(MODEL_NAME, generationConfig, parts);
-    setQuestions(response);
-    setPreLoader(null);
+    prompt(MODEL_NAME, generationConfig, parts)
+      .then((res) => setQuestions(res))
+      .finally(() => setPreLoader(null));
   };
 
   // Function to publish and share quiz
@@ -244,6 +244,7 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
             type="text"
             className="form-control"
             placeholder="Quiz name"
+            maxLength={50}
           />
           <OverlayTrigger
             placement={"top"}

@@ -138,19 +138,20 @@ export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
     >
       <div className="row">
         <div
-          className="col-sm-10"
+          className="col-6 col-sm-6"
           role="button"
           data-bs-toggle={setModal ? "modal" : ""}
           data-bs-target={setModal ? "#exampleModal" : ""}
         >
-          <h5>{quiz.name}</h5>
+          <h5 class="d-inline-block text-truncate w-100">{quiz.name}</h5>
           <div className="mb-2">
             {quiz.difficultyLevel.toUpperCase() + " "}
             <i className="fa-solid fa-circle"></i>
             {" " + quiz.questionsType}
           </div>
         </div>
-        <div className="col-sm-2 my-auto">
+        <span className="col-4 col-sm-4 my-auto">{quiz.createdAt}</span>
+        <div className="col-2 col-sm-2 my-auto">
           <OverlayTrigger
             placement={"top"}
             overlay={
@@ -163,10 +164,9 @@ export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
               to={`/leaderboard?qid=${encodeURIComponent(encrypt(quiz.id))}`}
               className="text-decoration-none text-light"
             >
-              <i className="fa-solid fa-chart-simple me-3"></i>
+              <i className="fa-solid fa-chart-simple"></i>
             </Link>
           </OverlayTrigger>
-          <span>{quiz.createdAt}</span>
         </div>
       </div>
     </li>
