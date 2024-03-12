@@ -1,0 +1,33 @@
+.preloader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.preloader-container.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.preloader-container.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader-image {
+  width: 100px;
+}
+
+.loader-message {
+  color: white;
+  font-weight: bold;
+}

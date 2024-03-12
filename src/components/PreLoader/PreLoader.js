@@ -1,23 +1,23 @@
-import React from "react";
-import loading from "./loading.gif";
+import React, { useState, useEffect } from "react";
+import loading from "./loading.svg";
+import "./style.css"; // Import CSS file for styles
 
 export default function PreLoader({ msg }) {
+  const [isVisible, setIsVisible] = useState(!!msg); // Initially set visibility based on msg
+
+  // Update visibility when msg changes
+  useEffect(() => {
+    setIsVisible(!!msg); // Convert msg to boolean
+  }, [msg]);
+
   return (
     <div
-      className={`preloader position-absolute z-3 vw-100 vh-100 d-${
-        msg ? "block" : "none"
+      className={`z-3 bg-dark preloader-container ${
+        isVisible ? "visible" : "hidden"
       }`}
-      style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
     >
-      <div className="d-flex justify-content-center align-items-center flex-column position-relative top-50">
-        <img
-          alt="loader"
-          className="image-responsive"
-          src={loading}
-          style={{ width: "100px" }}
-        />
-        <h3 className="text-white fw-bold">{msg}</h3>
-      </div>
+      <img alt="loader" className="loader-image img-fluid" src={loading} />
+      <h3 className="loader-message">{msg}</h3>
     </div>
   );
 }

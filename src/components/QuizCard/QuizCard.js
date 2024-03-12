@@ -52,6 +52,11 @@ export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
                               className="btn btn-danger mx-2"
                               data-bs-dismiss="modal"
                               onClick={() => {
+                                setModal({
+                                  title: null,
+                                  body: null,
+                                  footer: null,
+                                });
                                 // list all the attempt ids of this quiz
                                 request(
                                   `/api/attempts?filters[quiz][id][$eq]=${quiz.id}&fields[0]=id`,
@@ -86,6 +91,13 @@ export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
                               Delete
                             </button>
                             <button
+                              onClick={() =>
+                                setModal({
+                                  title: null,
+                                  body: null,
+                                  footer: null,
+                                })
+                              }
                               type="button"
                               className="btn btn-secondary"
                               data-bs-dismiss="modal"
