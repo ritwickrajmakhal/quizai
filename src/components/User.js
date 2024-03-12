@@ -103,7 +103,7 @@ export default function User({ userId, setModal, setAlert }) {
               attemptedQuizzes.map((quiz) => {
                 const quizAttributes = quiz.attributes.quiz.data;
                 return (
-                  <Link
+                  quizAttributes && <Link
                     key={quizAttributes.id}
                     className="text-decoration-none"
                     to={`/attempt?qid=${encodeURIComponent(

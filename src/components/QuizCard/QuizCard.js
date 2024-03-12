@@ -128,11 +128,10 @@ export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
                         title: "Share Quiz",
                         body: (
                           <Share
-                            url={`${
-                              window.location.origin
-                            }/attempt?qid=${encodeURIComponent(
-                              encrypt(quiz.id)
-                            )}`}
+                            url={`${window.location.origin
+                              }/attempt?qid=${encodeURIComponent(
+                                encrypt(quiz.id)
+                              )}`}
                           />
                         ),
                       });
@@ -155,7 +154,7 @@ export default function QuizCard({ quiz, setModal, handleModified, setAlert }) {
           data-bs-toggle={setModal ? "modal" : ""}
           data-bs-target={setModal ? "#exampleModal" : ""}
         >
-          <h5 class="d-inline-block text-truncate w-100">{quiz.name}</h5>
+          <h5 className="d-inline-block text-truncate w-100">{quiz.name}</h5>
           <div className="mb-2">
             {quiz.difficultyLevel.toUpperCase() + " "}
             <i className="fa-solid fa-circle"></i>
