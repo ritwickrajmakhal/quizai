@@ -306,7 +306,7 @@ export default function Attempt({ userId, setPreLoader, setAlert }) {
                     </div>
                   </div>
                 ) : (
-                  <div className="card-header pb-0 d-flex justify-content-center">
+                  <div className="card-header pb-0 d-flex justify-content-center text-dark">
                     <CountdownTimer
                       time={duration}
                       countdownCompleted={countdownCompleted}
