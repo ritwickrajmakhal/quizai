@@ -2,6 +2,12 @@
 
 Create a quiz game with AI
 
+
+
+https://github.com/ritwickrajmakhal/quizai/assets/100060023/6f027bfd-d79b-4ebd-bf09-dd1afcdac9f2
+
+
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
