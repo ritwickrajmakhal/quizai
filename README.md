@@ -1,6 +1,6 @@
 # QUIZ AI
 
-Create a quiz game with AI
+Create a quiz game with Quiz AI powerd by Gemini.
 
 
 
