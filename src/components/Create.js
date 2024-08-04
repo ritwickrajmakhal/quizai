@@ -126,10 +126,7 @@ export default function Create({ setPreLoader, userId, setModal, setAlert }) {
             topP: 1,
             maxOutputTokens: 4096,
           };
-    const MODEL_NAME =
-      quizParams.inputType === "images"
-        ? "gemini-1.0-pro-vision-latest"
-        : "gemini-1.0-pro";
+    const MODEL_NAME = "gemini-1.5-flash";
     if (
       quizParams.questionsType === "MCQ" ||
       quizParams.questionsType === "MSQ"
