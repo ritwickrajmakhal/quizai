@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "attempts",
+  "info": {
+    "singularName": "attempt",
+    "pluralName": "attempts",
+    "displayName": "attempt",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "quiz": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::quiz.quiz",
+      "inversedBy": "attempts"
+    },
+    "public": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::public.public",
+      "inversedBy": "attempts"
+    },
+    "total_points": {
+      "type": "float",
+      "required": true
+    },
+    "answers": {
+      "type": "json",
+      "required": true
+    }
+  }
+}

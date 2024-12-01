@@ -1,0 +1,56 @@
+{
+  "kind": "collectionType",
+  "collectionName": "quizzes",
+  "info": {
+    "singularName": "quiz",
+    "pluralName": "quizzes",
+    "displayName": "quiz",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "difficultyLevel": {
+      "type": "enumeration",
+      "enum": [
+        "easy",
+        "medium",
+        "hard"
+      ],
+      "required": true
+    },
+    "public": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::public.public",
+      "inversedBy": "quizzes"
+    },
+    "questionsType": {
+      "type": "enumeration",
+      "enum": [
+        "MCQ",
+        "MSQ",
+        "NAT",
+        "SAQ",
+        "LAQ"
+      ],
+      "required": true
+    },
+    "attempts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::attempt.attempt",
+      "mappedBy": "quiz"
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "questions": {
+      "type": "json",
+      "required": true
+    }
+  }
+}
