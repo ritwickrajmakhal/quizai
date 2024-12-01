@@ -10,8 +10,8 @@
     "strapi": "strapi"
   },
   "dependencies": {
-    "@strapi/plugin-cloud": "4.19.1",
-    "@strapi/plugin-i18n": "4.19.1",
+    "@strapi/plugin-cloud": "4.25.17",
+    "@strapi/plugin-i18n": "4.25.13",
     "@strapi/plugin-users-permissions": "^4.25.1",
     "@strapi/strapi": "^4.5.6",
     "better-sqlite3": "8.6.0",
